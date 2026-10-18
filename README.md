@@ -109,7 +109,7 @@ remotes::install_github("41929424/termr")
 Or install a local checkout:
 
 ```r
-remotes::install_local("path/to/termr")
+remotes::install_github("menshikovs/termr")
 ```
 
 termr uses a small set of R runtime dependencies and keeps DBI, RSQLite,

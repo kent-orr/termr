@@ -103,7 +103,7 @@ install.packages("termr")
 Install the version on GitHub with:
 
 ```r
-remotes::install_github("41929424/termr")
+remotes::install_github("menshikovs/termr")
 ```
 
 Or install a local checkout:

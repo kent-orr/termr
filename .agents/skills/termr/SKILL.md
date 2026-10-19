@@ -26,8 +26,8 @@ ordinary scripts, or applications written in other languages here.
    Use `test_app()` for keyboard, widget state, and rendered output. Run
    `run()` only in a real terminal; headless success does not prove platform
    terminal behavior.
-5. Report the commands run and distinguish headless results from real
-   terminal or cross-platform checks.
+5. Report commands run and distinguish headless results from real-terminal
+   and cross-platform checks.
 
 ## Scope
 
@@ -39,10 +39,10 @@ compatibility risk. Keep UI work synchronous and small unless the user needs
 long-running work; database queries and table-source page callbacks can block
 the event loop.
 
-## Install this skill elsewhere
+## Installation
 
-For a project-specific skill, copy this `termr` directory to the other
-repository's `.agents/skills/termr/`. For user-wide use, copy it to
-`$CODEX_HOME/skills/termr/` or `~/.codex/skills/termr/`. See [installation
-notes](INSTALL.md). The target R project must also have `termr` installed;
-this skill does not install R packages.
+Copy the complete `termr` skill directory, including `references/` and
+`assets/`, into a skill directory recognized by the target agent. Agent-specific
+paths and installation methods are listed in termr's compatibility guide. The
+target R project must also have the `termr` package installed; this skill does
+not install R packages.

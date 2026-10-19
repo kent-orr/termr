@@ -58,6 +58,7 @@ stability guide. Avoid relying on them for a routine app unless the feature
 requires them. Never use `termr:::` or undocumented internals in application
 code.
 
-The package's `NAMESPACE`, installed R help, and `docs/stability.md` are the
-authoritative API references when available. The repository-level guide is
-at `docs/stability.md` in the termr source tree.
+The installed package's help and `NAMESPACE` are available in any R project.
+When working from a termr checkout, also consult `docs/stability.md` for the
+current stability classification. This skill's bundled examples intentionally
+focus on stable APIs and do not require access to the termr source repository.

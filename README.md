@@ -1,7 +1,7 @@
 # termr
 
-> Modern reactive terminal applications for R, with first-class support for
-> data workflows.
+> A terminal user interface (TUI) framework for R, with reactive components
+> and first-class support for data workflows.
 
 ![termr demo](https://raw.githubusercontent.com/41929424/termr/main/docs/termr-clean.gif)
 
@@ -164,6 +164,7 @@ Start with [Getting started](https://github.com/41929424/termr/blob/main/docs/ge
 [widgets](https://github.com/41929424/termr/blob/main/docs/widgets.md), [layouts](https://github.com/41929424/termr/blob/main/docs/layout.md), [events](https://github.com/41929424/termr/blob/main/docs/events.md),
 [reactivity](https://github.com/41929424/termr/blob/main/docs/reactivity.md), [styling](https://github.com/41929424/termr/blob/main/docs/styling.md),
 [workers](https://github.com/41929424/termr/blob/main/docs/workers.md) and [extensions](https://github.com/41929424/termr/blob/main/docs/extensions.md).
+[Agent recipes](https://github.com/41929424/termr/tree/main/docs/agent-recipes) provide verified end-to-end examples; the [termr Codex skill](https://github.com/41929424/termr/tree/main/.agents/skills/termr) helps agents build and test applications in other repositories.
 [ARCHITECTURE.md](https://github.com/41929424/termr/blob/main/ARCHITECTURE.md) describes the implementation for contributors.
 
 ## License

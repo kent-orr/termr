@@ -3,6 +3,7 @@
 .RData
 *.tar.gz
 termr.Rcheck/
+/site/
 /tools/validation-0.4/
 /tools/ci-work/
 /tools/pty/__pycache__/

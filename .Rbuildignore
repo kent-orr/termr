@@ -8,3 +8,6 @@
 ^\.github$
 ^\.gitattributes$
 ^docs$
+^site$
+^pkgdown$
+^_pkgdown\.yml$

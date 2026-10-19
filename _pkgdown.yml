@@ -1,0 +1,30 @@
+url: https://menshikovs.github.io/termr/
+destination: site
+template:
+  bootstrap: 5
+home:
+  title: "termr: Terminal User Interfaces in R"
+  description: Build interactive, keyboard-driven terminal applications and data tools with R.
+navbar:
+  structure:
+    left: [home, getting-started, reference, news, guides]
+    right: [github]
+  components:
+    getting-started:
+      text: Get started
+      href: https://github.com/menshikovs/termr/blob/main/docs/getting-started.md
+    guides:
+      text: Guides
+      menu:
+      - text: Widgets, layout, events, and styling
+        href: https://github.com/menshikovs/termr/tree/main/docs
+      - text: Data tools
+        href: https://github.com/menshikovs/termr/blob/main/docs/data.md
+      - text: SQL workflows
+        href: https://github.com/menshikovs/termr/blob/main/docs/sql.md
+      - text: Headless testing
+        href: https://github.com/menshikovs/termr/blob/main/docs/testing.md
+      - text: API stability
+        href: https://github.com/menshikovs/termr/blob/main/docs/stability.md
+      - text: Agent recipes
+        href: https://github.com/menshikovs/termr/tree/main/docs/agent-recipes

@@ -4,10 +4,23 @@
 interfaces. Compose applications from widgets and layouts, handle typed events,
 and inspect data in a full-screen terminal interface.
 
-## Install from GitHub
+## Installation
 
-`termr` requires R 4.1 or newer and is not yet published on CRAN. Install the
-GitHub installer once, then install termr from its repository:
+`termr` requires R 4.1 or newer and is not currently published on CRAN.
+R-universe provides an R package repository that works with the standard
+`install.packages()` function. Install termr and its dependencies with:
+
+```r
+install.packages(
+  "termr",
+  repos = c(
+    "https://menshikovs.r-universe.dev",
+    "https://cloud.r-project.org"
+  )
+)
+```
+
+For the development version, install `remotes` and then install from GitHub:
 
 ```r
 install.packages("remotes")

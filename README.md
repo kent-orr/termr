@@ -96,22 +96,30 @@ screen snapshots; static rendering does not start an app event loop.
 
 ## Installation
 
-termr requires R >= 4.1. Once termr is available on CRAN, install the
-released version with:
+termr requires R >= 4.1 and is not currently published on CRAN.
+
+### Recommended: R-universe
+
+R-universe provides an R package repository that works with the standard
+`install.packages()` function. Install termr and its dependencies with:
 
 ```r
-install.packages("termr")
+install.packages(
+  "termr",
+  repos = c(
+    "https://menshikovs.r-universe.dev",
+    "https://cloud.r-project.org"
+  )
+)
 ```
 
-Install the version on GitHub with:
+### Development version: GitHub
+
+To install the latest development version from GitHub, first install
+`remotes`, then run:
 
 ```r
-remotes::install_github("menshikovs/termr")
-```
-
-Or install a local checkout:
-
-```r
+install.packages("remotes")
 remotes::install_github("menshikovs/termr")
 ```
 

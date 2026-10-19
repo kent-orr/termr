@@ -1,5 +1,8 @@
 # termr
 
+![R](https://img.shields.io/badge/R-%E2%89%A5%204.1-276DC3?style=flat-square&logo=r&logoColor=white)
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/menshikovs/termr)
+
 > A terminal user interface (TUI) framework for R, with reactive components
 > and first-class support for data workflows.
 

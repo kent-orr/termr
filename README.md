@@ -146,6 +146,16 @@ passed on the RC1 commit: Ubuntu release, oldrel-1, R 4.1 and devel; macOS
 and Windows release; SQL integration; Linux/macOS PTY; and Windows input.
 The six R CMD check jobs reported 0 errors, 0 warnings and 0 notes.
 
+## Agent skills
+
+The canonical [termr Agent Skill](.agents/skills/termr/SKILL.md) includes
+verified API notes, recipes, a runnable template, and headless testing guidance.
+Install it for a supported agent with `npx skills add menshikovs/termr --skill termr --agent <agent> --copy`
+(project scope), or copy it to that agent's skill directory. See the
+[agent compatibility guide](docs/AGENT_COMPATIBILITY.md) for supported paths,
+invocation details, and validation status. The installer command could not be
+executed in the current network-restricted validation environment.
+
 ## API stability
 
 termr 1.0.0 is the first stable release. Core app/widget construction,

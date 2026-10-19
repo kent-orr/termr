@@ -1,19 +1,14 @@
-# Install the termr skill
+# Install the termr skill directory
 
-Copy the complete `termr` skill directory, including `SKILL.md`,
-`references/`, and `assets/`, to one of these locations:
+Install or copy the complete `termr` directory, preserving `SKILL.md`,
+`references/`, and `assets/`. Place it under a skill root recognized by your
+agent. Repository-level instructions and exact locations for supported agents
+are maintained in the termr repository at `docs/AGENT_COMPATIBILITY.md`.
 
-- **One repository:** `<repository>/.agents/skills/termr/`
-- **All repositories:** `$CODEX_HOME/skills/termr/`, or
-  `~/.codex/skills/termr/` when `CODEX_HOME` is not set.
+If copying manually, copy the directory itself into the host's `skills/`
+directory; do not copy only `SKILL.md`, since it links to bundled references
+and an application template.
 
-For example, from a shell with this repository as the current directory:
-
-```sh
-mkdir -p /path/to/other-repository/.agents/skills
-cp -R .agents/skills/termr /path/to/other-repository/.agents/skills/termr
-```
-
-Install `termr` separately in the R library used by the target project. No
-other R package is required for the application template; `testthat` is
-optional and is needed only when the project uses testthat tests.
+Install the `termr` R package separately in the target project's R library.
+The application template uses only termr; `testthat` is optional and is
+needed only when running the testthat recipe.

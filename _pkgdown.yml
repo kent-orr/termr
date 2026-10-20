@@ -2,9 +2,13 @@ url: https://menshikovs.github.io/termr/
 destination: site
 template:
   bootstrap: 5
+  opengraph:
+    image:
+      src: https://raw.githubusercontent.com/41929424/termr/main/docs/images/widget-showcase.png
+      alt: termr terminal interface with widgets, metrics, and a data table
 home:
   title: "termr: Terminal User Interfaces in R"
-  description: Build interactive, keyboard-driven terminal applications and data tools with R.
+  description: termr is a reactive terminal UI framework for building interactive terminal applications in R.
 navbar:
   structure:
     left: [home, getting-started, reference, news, guides]
@@ -28,3 +32,5 @@ navbar:
         href: https://github.com/menshikovs/termr/blob/main/docs/stability.md
       - text: Agent recipes
         href: https://github.com/menshikovs/termr/tree/main/docs/agent-recipes
+      - text: Search Console setup
+        href: https://github.com/menshikovs/termr/blob/main/docs/search-console.md

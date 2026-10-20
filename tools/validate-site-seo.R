@@ -3,12 +3,15 @@
 site <- "site"
 base_url <- "https://menshikovs.github.io/termr/"
 token <- "y-1CU_OpfbxmAGDGQm3qi8Xc9RcalnzCOzJ3CZ2VA_o"
+bing_token <- "ED124DAA8CF210E4D6CB70008D1A15B1"
+bing_tag <- sprintf('<meta name="msvalidate.01" content="%s" />', bing_token)
 config <- yaml::read_yaml("_pkgdown.yml")
 description <- read.dcf("DESCRIPTION")
 stopifnot(
   identical(config$url, base_url),
   identical(config$destination, site),
   identical(config$template$params$google_site_verification, token),
+  grepl(bing_tag, config$template$includes$in_header, fixed = TRUE),
   identical(unname(description[1, "Title"]), "Reactive Terminal UI Framework for R"),
   identical(unname(description[1, "BugReports"]), "https://github.com/menshikovs/termr/issues")
 )
@@ -41,15 +44,18 @@ for (page in pages) {
   title <- xml2::xml_text(xml2::xml_find_all(html, "//head/title"))
   desc <- xml2::xml_find_all(html, "//head/meta[@name='description']")
   verification <- xml2::xml_find_all(html, "//head/meta[@name='google-site-verification']")
+  bing_verification <- xml2::xml_find_all(html, "//head/meta[@name='msvalidate.01']")
   robots <- xml2::xml_attr(xml2::xml_find_all(html, "//meta[@name='robots']"), "content")
   canonicals <- xml2::xml_attr(xml2::xml_find_all(html, "//link[@rel='canonical']"), "href")
   stopifnot(length(title) == 1L, nzchar(title), grepl("termr", title, fixed = TRUE),
             length(desc) == 1L, nzchar(xml2::xml_attr(desc, "content")),
             length(verification) == 1L,
             identical(xml2::xml_attr(verification, "content"), token),
+            length(bing_verification) == 1L,
+            identical(xml2::xml_attr(bing_verification, "content"), bing_token),
             !any(grepl("noindex|nofollow", robots, ignore.case = TRUE)),
             length(xml2::xml_find_all(html, "//main//h1")) == 1L,
-            length(canonicals) <= 1L)
+            length(canonicals) == 1L)
   expected_url <- if (page == "index.html") base_url else paste0(base_url, page)
   if (length(canonicals)) stopifnot(identical(canonicals, expected_url))
   for (property in c("og:title", "og:description", "og:image")) {
@@ -93,6 +99,61 @@ paths <- substring(urls, nchar(base_url) + 1L)
 stopifnot(all(file.exists(file.path(site, paths))), all(pages %in% paths))
 cat("PASS sitemap:", length(urls), "unique HTTPS URLs with existing local pages\n")
 cat("Native non-content entries:", paste(paths[grepl("404|google.*\\.html$", paths)], collapse = ", "), "\n")
+
+# Check every content page, including indexes and pages with fallback descriptions.
+people <- eval(parse(text = description[1, "Authors@R"]),
+               envir = list(person = utils::person), enclos = baseenv())
+authors <- Filter(function(person) "aut" %in% person$role, as.list(people))
+author_names <- vapply(authors, function(person) paste(c(person$given, person$family), collapse = " "), character(1))
+social_pages <- 0L
+for (page in paths) {
+  html <- xml2::read_html(file.path(site, page), encoding = "UTF-8")
+  if (!length(xml2::xml_find_all(html, "//head/meta[@property='og:title']"))) next
+  meta <- function(key, attribute = "property") {
+    nodes <- xml2::xml_find_all(html, sprintf("//head/meta[@%s='%s']", attribute, key))
+    stopifnot(length(nodes) == 1L, nzchar(xml2::xml_attr(nodes, "content")))
+    xml2::xml_attr(nodes, "content")
+  }
+  expected_url <- if (page == "index.html") base_url else paste0(base_url, page)
+  canonical <- xml2::xml_find_all(html, "//head/link[@rel='canonical']")
+  stopifnot(length(canonical) == 1L,
+            identical(xml2::xml_attr(canonical, "href"), expected_url),
+            identical(meta("og:url"), expected_url),
+            identical(meta("og:type"), "website"),
+            identical(meta("og:site_name"), "termr"),
+            identical(meta("og:locale"), "en_US"),
+            identical(meta("twitter:card", "name"), "summary_large_image"),
+            identical(meta("twitter:title", "name"), meta("og:title")),
+            identical(meta("twitter:description", "name"), meta("og:description")),
+            identical(meta("description", "name"), meta("og:description")),
+            identical(meta("twitter:image", "name"), meta("og:image")),
+            identical(xml2::xml_text(xml2::xml_find_first(html, "//head/title")),
+                      paste(meta("og:title"), "\u2022", "termr")),
+            grepl("termr", meta("keywords", "name"), fixed = TRUE))
+  image <- meta("og:image")
+  stopifnot(startsWith(image, base_url),
+            file.exists(file.path(site, substring(image, nchar(base_url) + 1L))))
+  scripts <- xml2::xml_find_all(html, "//head/script[@type='application/ld+json']")
+  stopifnot(length(scripts) == 1L)
+  json <- xml2::xml_text(scripts)
+  stopifnot(jsonlite::validate(json))
+  software <- jsonlite::fromJSON(json, simplifyVector = FALSE)
+  stopifnot(identical(software[["@context"]], "https://schema.org"),
+            identical(software[["@type"]], "SoftwareSourceCode"),
+            identical(software$name, unname(description[1, "Package"])),
+            identical(software$version, unname(description[1, "Version"])),
+            identical(software$url, base_url),
+            identical(software$codeRepository, "https://github.com/menshikovs/termr"),
+            identical(software$programmingLanguage, "R"),
+            identical(software$runtimePlatform, "R"),
+            identical(software$license, "https://opensource.org/license/mit/"),
+            identical(unname(description[1, "License"]), "MIT + file LICENSE"),
+            nzchar(software$description),
+            startsWith(gsub("[[:space:]]+", " ", description[1, "Description"]), software$description),
+            identical(vapply(software$author, `[[`, character(1), "name"), author_names))
+  social_pages <- social_pages + 1L
+}
+cat("PASS JSON-LD, Open Graph, Twitter, keywords, canonical URLs, and image assets:", social_pages, "content pages\n")
 redirects <- list.files(site, pattern = "\\.html$", full.names = TRUE, recursive = TRUE)
 noindex <- vapply(redirects, function(path) {
   html <- xml2::read_html(path)
@@ -110,8 +171,10 @@ cat("PASS redirect canonical destinations and sitemap exclusion:", sum(noindex),
 verification_file <- "google9c54d79139c77170.html"
 stopifnot(identical(unname(tools::md5sum(file.path("pkgdown/assets", verification_file))),
                     unname(tools::md5sum(file.path(site, verification_file)))),
+          identical(unname(tools::md5sum("pkgdown/assets/BingSiteAuth.xml")),
+                    unname(tools::md5sum(file.path(site, "BingSiteAuth.xml")))),
           identical(unname(tools::md5sum("docs/images/widget-showcase.png")),
                     unname(tools::md5sum(file.path(site, "widget-showcase.png")))),
           file.exists(file.path(site, ".nojekyll")))
-cat("PASS retained verification file, preview image, and Pages artifact marker\n")
-cat("NOTE pkgdown 2.2.1 does not emit canonical or og:url on normal content pages.\n")
+cat("PASS retained Google and Bing verification files, preview image, and Pages artifact marker\n")
+cat("NOTE tools/build-site.R adds page URLs after pkgdown renders its native metadata.\n")

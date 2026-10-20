@@ -1,22 +1,21 @@
 Package: termr
-Title: Modern Reactive Terminal Applications with Data Workflows
+Title: Reactive Terminal UI Framework for R
 Version: 1.0.1
 Authors@R:
     person("Akims", "Mensikovs", email = "akimm7926@gmail.com",
            role = c("aut", "cre", "cph"))
-Description: Build modern reactive terminal applications for data workflows
-    in R using reusable widgets, layouts, events, focus management and
-    themes. A virtual screen buffer and incremental rendering update changed
-    cells, while a headless driver supports deterministic application tests.
-    Includes data tables that render visible rows on demand, lazy table
-    sources, data inspection, SQL editing and background R workers with
-    progress and streamed output.
-    Optional database support and static text, Markdown, HTML, SVG and
-    JSON exports support analytical tools and reports without requiring an
-    interactive terminal for static output.
+Description: Build interactive terminal user interfaces (TUIs) in R using
+    reusable widgets, layouts, events, focus management and themes.
+    Compose reactive applications, terminal dashboards and data explorers.
+    A virtual screen buffer and incremental rendering update changed cells,
+    while a headless driver supports deterministic application tests.
+    Advanced features include experimental reactive graph APIs, lazy table
+    sources, SQL editing, optional database tools, background R workers and
+    static text, Markdown, HTML, SVG and JSON exports.
 License: MIT + file LICENSE
-URL: https://menshikovs.github.io/termr/, https://github.com/41929424/termr
-BugReports: https://github.com/41929424/termr/issues
+URL: https://menshikovs.github.io/termr/, https://github.com/menshikovs/termr
+BugReports: https://github.com/menshikovs/termr/issues
+Config/Needs/website: rmarkdown
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 Depends:

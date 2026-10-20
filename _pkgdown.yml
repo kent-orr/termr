@@ -2,21 +2,25 @@ url: https://menshikovs.github.io/termr/
 destination: site
 template:
   bootstrap: 5
+  params:
+    google_site_verification: "y-1CU_OpfbxmAGDGQm3qi8Xc9RcalnzCOzJ3CZ2VA_o"
   opengraph:
     image:
-      src: https://raw.githubusercontent.com/41929424/termr/main/docs/images/widget-showcase.png
+      src: widget-showcase.png
       alt: termr terminal interface with widgets, metrics, and a data table
 home:
-  title: "termr: Terminal User Interfaces in R"
-  description: termr is a reactive terminal UI framework for building interactive terminal applications in R.
+  title: "Reactive Terminal UI Framework for R"
+  description: >
+    Build interactive terminal user interfaces (TUIs) in R with termr.
+    Create reactive dashboards, data explorers, and SQL tools using widgets and layouts.
 navbar:
   structure:
-    left: [home, getting-started, reference, news, guides]
+    left: [home, getting-started, articles, reference, news, guides]
     right: [github]
   components:
     getting-started:
       text: Get started
-      href: https://github.com/menshikovs/termr/blob/main/docs/getting-started.md
+      href: articles/getting-started.html
     guides:
       text: Guides
       menu:
@@ -27,10 +31,17 @@ navbar:
       - text: SQL workflows
         href: https://github.com/menshikovs/termr/blob/main/docs/sql.md
       - text: Headless testing
-        href: https://github.com/menshikovs/termr/blob/main/docs/testing.md
+        href: articles/testing-terminal-ui.html
       - text: API stability
         href: https://github.com/menshikovs/termr/blob/main/docs/stability.md
       - text: Agent recipes
         href: https://github.com/menshikovs/termr/tree/main/docs/agent-recipes
       - text: Search Console setup
         href: https://github.com/menshikovs/termr/blob/main/docs/search-console.md
+articles:
+- title: Build and test terminal applications
+  navbar: Tutorials
+  contents:
+  - articles/getting-started
+  - articles/terminal-dashboards
+  - articles/testing-terminal-ui

@@ -1,0 +1,102 @@
+---
+title: "Building Interactive Terminal Dashboards in R"
+description: "Build a keyboard-driven R terminal dashboard with a sortable in-memory data table, selection events, and headless interaction checks."
+---
+
+A terminal dashboard keeps data and controls together inside a terminal.
+termr supplies widgets, layouts and events so application code can work with
+R data rather than terminal escape sequences. Start with the stable,
+in-memory table pattern from the verified data table recipe.
+
+## Build a small data explorer
+
+[Install termr](getting-started.html#install-termr), then save the following
+chunk as `table-app.R`. Only termr and base R are required.
+
+```{r table-app}
+library(termr)
+
+items <- data.frame(
+  item = c("Tea", "Coffee", "Apple"),
+  units = c(5L, 8L, 3L),
+  stringsAsFactors = FALSE
+)
+
+items_table <- data_table(
+  items,
+  id = "items",
+  zebra = TRUE,
+  header_sort = TRUE
+)
+
+application <- app(
+  vertical(
+    label("Inventory"),
+    items_table,
+    label("Use Up/Down to select a row. Click a header or press S to sort.", id = "selection")
+  ),
+  on("datatable.row_selected", "#items", function(event, app) {
+    row <- event$data$value
+    app$query_one("#selection")$update(
+      sprintf("Selected: %s (%d units)", row$item, row$units)
+    )
+  }),
+  bind("q", "quit")
+)
+```
+
+`vertical()` reserves space for the title, table and selection label. Use
+`horizontal()` to arrange panels beside one another. Display widgets such as
+`metric()` and `sparkline()` can add summaries; see the
+[widget guide](https://github.com/menshikovs/termr/blob/main/docs/widgets.md).
+
+## Navigate and sort
+
+Run in a real terminal:
+
+```sh
+Rscript -e "source('table-app.R'); termr::run(application)"
+```
+
+Up/Down move the row cursor. Click a header or press S to sort by the active
+column; repeated presses cycle ascending, descending and off. Press q to
+quit. The selection event provides the row as a named list in
+`event$data$value`; `event$data$row` is the original row number.
+
+## Check the interaction headlessly
+
+After sourcing the app in a fresh session, run:
+
+```{r verify-table}
+verify_table <- function() {
+  pilot <- test_app(application, width = 60, height = 8)
+  on.exit(pilot$stop(), add = TRUE)
+  pilot$press("down")
+  stopifnot(identical(pilot$query_one("#selection")$text,
+                      "Selected: Coffee (8 units)"))
+  pilot$press("s")
+  stopifnot(identical(items_table$sort_state$column, "item"))
+  stopifnot(grepl("Apple", pilot$screen_text()[[3]], fixed = TRUE))
+}
+verify_table()
+```
+
+The build executes these checks. The table formats and paints its visible
+viewport, but this example still holds the entire data frame in memory.
+Lazy table sources, database adapters and SQL editors are separate,
+experimental APIs. Database queries and page fetches are synchronous.
+
+## Extend an existing dashboard
+
+For a larger, synthetic live dashboard, the repository includes
+[`terminal-dashboard.R`](https://github.com/menshikovs/termr/blob/main/inst/examples/terminal-dashboard.R).
+Run `termr::run_example("terminal-dashboard")` in a terminal. It combines
+metrics, sparklines, progress bars, a service table and an event log with
+pause and theme bindings. Its synthetic data is a demonstration, not a
+production monitoring backend.
+
+See the [`data_table()` reference](../reference/data_table.html),
+[data tools guide](https://github.com/menshikovs/termr/blob/main/docs/data.md),
+[SQL workflows](https://github.com/menshikovs/termr/blob/main/docs/sql.md),
+[original table recipe](https://github.com/menshikovs/termr/blob/main/docs/agent-recipes/03-data-table.md)
+and [testing tutorial](testing-terminal-ui.html) for the next steps.

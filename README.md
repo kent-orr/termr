@@ -1,4 +1,4 @@
-# termr
+# termr — Reactive Terminal UI Framework for R
 
 ![R](https://img.shields.io/badge/R-%E2%89%A5%204.1-276DC3?style=flat-square&logo=r&logoColor=white)
 ![OS](https://img.shields.io/badge/OS-Linux%20%7C%20macOS%20%7C%20Windows-blue)
@@ -9,7 +9,7 @@
 > A terminal user interface (TUI) framework for R, with reactive components
 > and first-class support for data workflows.
 
-![termr demo](https://raw.githubusercontent.com/41929424/termr/main/docs/termr-clean.gif)
+![termr demo](https://raw.githubusercontent.com/menshikovs/termr/main/docs/termr-clean.gif)
 
 Build modern terminal applications with R: data explorers, dashboards,
 database browsers, SQL workspaces and internal analytical tools. termr combines
@@ -20,6 +20,9 @@ R is already excellent at data, statistics and machine learning. termr adds
 a terminal application layer around those workflows. A virtual framebuffer
 and incremental rendering send changed cells to the terminal; application
 code works with widgets and events instead of ANSI escape sequences.
+
+Read the [termr documentation](https://menshikovs.github.io/termr/) and the
+[terminal UI tutorial](https://menshikovs.github.io/termr/articles/getting-started.html).
 
 ## Quick start
 
@@ -64,15 +67,15 @@ to be stable. To inspect a data frame directly, call `browse_data(mtcars)`.
 
 `data_table()` formats and paints the visible viewport. In-memory tables
 support sorting, filtering, search, selection, and resizable, hidden and
-frozen columns. [Lazy table sources](https://github.com/41929424/termr/blob/main/docs/data-sources.md) fetch bounded pages
+frozen columns. [Lazy table sources](https://github.com/menshikovs/termr/blob/main/docs/data-sources.md) fetch bounded pages
 without loading a whole dataset into an R data frame. SQLite table and query
 adapters are included; other DBI drivers can provide paging callbacks.
 
 `sql_editor()`, `db_connection()` and `db_explorer()` compose SQL editing,
 database metadata and result browsing through optional DBI packages. Query
 execution and page fetches are synchronous; background workers are available
-for separate analytical jobs. See [data tools](https://github.com/41929424/termr/blob/main/docs/data.md),
-[SQL workflows](https://github.com/41929424/termr/blob/main/docs/sql.md) and [database explorer](https://github.com/41929424/termr/blob/main/docs/database-explorer.md).
+for separate analytical jobs. See [data tools](https://github.com/menshikovs/termr/blob/main/docs/data.md),
+[SQL workflows](https://github.com/menshikovs/termr/blob/main/docs/sql.md) and [database explorer](https://github.com/menshikovs/termr/blob/main/docs/database-explorer.md).
 
 ```r
 run_example()                  # list bundled examples
@@ -87,7 +90,7 @@ trees, Markdown, metrics and sparklines. Add generated help, modal dialogs,
 notifications and a command palette. Stylesheets and themes include
 monochrome/`NO_COLOR`, high contrast and reduced motion.
 
-![termr widget showcase with tabs, metrics, progress and a sparkline](https://raw.githubusercontent.com/41929424/termr/main/docs/images/widget-showcase.png)
+![termr widget showcase with tabs, metrics, progress and a sparkline](https://raw.githubusercontent.com/menshikovs/termr/main/docs/images/widget-showcase.png)
 
 This screenshot comes from the RC1 source tree and displays its package
 version, `0.9.0.9000`.
@@ -140,10 +143,10 @@ For RC1, Windows real interactive console smoke and Linux through a real
 `ssh -t` session were manually reported PASS. macOS real terminal, tmux,
 screen and RStudio Terminal have not been manually validated. RStudio and
 Positron consoles are not terminal hosts; use their terminal tabs for
-interactive apps. See the [platform matrix](https://github.com/41929424/termr/blob/main/docs/platform-testing.md) and
-[SSH guide](https://github.com/41929424/termr/blob/main/docs/ssh.md) for evidence and limits.
+interactive apps. See the [platform matrix](https://github.com/menshikovs/termr/blob/main/docs/platform-testing.md) and
+[SSH guide](https://github.com/menshikovs/termr/blob/main/docs/ssh.md) for evidence and limits.
 
-For knitr, CI and other non-TTY contexts, use [static export](https://github.com/41929424/termr/blob/main/docs/export.md).
+For knitr, CI and other non-TTY contexts, use [static export](https://github.com/menshikovs/termr/blob/main/docs/export.md).
 
 ## Testing
 
@@ -154,8 +157,8 @@ pilot$stop()
 ```
 
 `test_app()` uses the real event loop and renderer with simulated input and
-time. [Testing](https://github.com/41929424/termr/blob/main/docs/testing.md) covers keys, mouse, paste, resize, workers
-and snapshots. [Full CI run 37758703750](https://github.com/41929424/termr/actions/runs/37758703750)
+time. [Testing](https://github.com/menshikovs/termr/blob/main/docs/testing.md) covers keys, mouse, paste, resize, workers
+and snapshots. [Full CI run 37758703750](https://github.com/menshikovs/termr/actions/runs/37758703750)
 passed on the RC1 commit: Ubuntu release, oldrel-1, R 4.1 and devel; macOS
 and Windows release; SQL integration; Linux/macOS PTY; and Windows input.
 The six R CMD check jobs reported 0 errors, 0 warnings and 0 notes.
@@ -179,17 +182,17 @@ in NEWS and migration notes. The reactive
 graph, workers, editor, lazy sources, database support, static export and
 custom extensions remain experimental. Workflow widgets added late in the
 pre-1.0 cycle also remain experimental. The complete classification is in
-[API stability](https://github.com/41929424/termr/blob/main/docs/stability.md); see [migration notes](https://github.com/41929424/termr/blob/main/docs/migration-to-1.0.md)
+[API stability](https://github.com/menshikovs/termr/blob/main/docs/stability.md); see [migration notes](https://github.com/menshikovs/termr/blob/main/docs/migration-to-1.0.md)
 and [NEWS](NEWS.md) for changes.
 
 ## Documentation
 
-Start with [Getting started](https://github.com/41929424/termr/blob/main/docs/getting-started.md), then explore
-[widgets](https://github.com/41929424/termr/blob/main/docs/widgets.md), [layouts](https://github.com/41929424/termr/blob/main/docs/layout.md), [events](https://github.com/41929424/termr/blob/main/docs/events.md),
-[reactivity](https://github.com/41929424/termr/blob/main/docs/reactivity.md), [styling](https://github.com/41929424/termr/blob/main/docs/styling.md),
-[workers](https://github.com/41929424/termr/blob/main/docs/workers.md) and [extensions](https://github.com/41929424/termr/blob/main/docs/extensions.md).
-[Agent recipes](https://github.com/41929424/termr/tree/main/docs/agent-recipes) provide verified end-to-end examples; the [termr Codex skill](https://github.com/41929424/termr/tree/main/.agents/skills/termr) helps agents build and test applications in other repositories.
-[ARCHITECTURE.md](https://github.com/41929424/termr/blob/main/ARCHITECTURE.md) describes the implementation for contributors.
+Start with [Getting started](https://github.com/menshikovs/termr/blob/main/docs/getting-started.md), then explore
+[widgets](https://github.com/menshikovs/termr/blob/main/docs/widgets.md), [layouts](https://github.com/menshikovs/termr/blob/main/docs/layout.md), [events](https://github.com/menshikovs/termr/blob/main/docs/events.md),
+[reactivity](https://github.com/menshikovs/termr/blob/main/docs/reactivity.md), [styling](https://github.com/menshikovs/termr/blob/main/docs/styling.md),
+[workers](https://github.com/menshikovs/termr/blob/main/docs/workers.md) and [extensions](https://github.com/menshikovs/termr/blob/main/docs/extensions.md).
+[Agent recipes](https://github.com/menshikovs/termr/tree/main/docs/agent-recipes) provide verified end-to-end examples; the [termr Codex skill](https://github.com/menshikovs/termr/tree/main/.agents/skills/termr) helps agents build and test applications in other repositories.
+[ARCHITECTURE.md](https://github.com/menshikovs/termr/blob/main/ARCHITECTURE.md) describes the implementation for contributors.
 
 ## License
 

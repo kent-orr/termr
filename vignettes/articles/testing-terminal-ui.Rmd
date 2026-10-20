@@ -1,0 +1,84 @@
+---
+title: "Testing Terminal UI Applications in R"
+description: "Use termr's headless driver to simulate keyboard input and inspect rendered terminal output in deterministic R application tests."
+---
+
+`test_app()` starts a termr application with a headless driver. Input is
+queued, time is simulated, and output passes through the normal event loop
+and renderer into a virtual terminal. Tests can inspect widget state and
+visible output without taking over a real terminal.
+
+## A complete keyboard and screen test
+
+[Install termr](getting-started.html#install-termr), save the following chunk
+as `greeting-test.R`, and run `Rscript greeting-test.R`. Only termr and base R
+are needed. This is the canonical headless testing recipe; it also executes
+as part of the website build.
+
+```{r greeting-test}
+library(termr)
+
+application <- app(
+  vertical(
+    label("Name"),
+    input(id = "name"),
+    button("Greet", id = "greet"),
+    label("", id = "result")
+  ),
+  on("button.pressed", "#greet", function(event, app) {
+    app$query_one("#result")$update(
+      paste("Hello,", app$query_one("#name")$value)
+    )
+  }),
+  bind("escape", "quit")
+)
+
+verify_greeting <- function() {
+  pilot <- test_app(application, width = 40, height = 8)
+  on.exit(pilot$stop(), add = TRUE)
+
+  pilot$type("Ada")
+  pilot$press("tab", "enter")
+
+  screen <- pilot$screen_text()
+  stopifnot(identical(pilot$query_one("#result")$text, "Hello, Ada"))
+  stopifnot(any(grepl("Hello, Ada", screen, fixed = TRUE)))
+  screen
+}
+
+verified_screen <- verify_greeting()
+cat(verified_screen, sep = "\n")
+```
+
+A successful run exits with status 0. `stopifnot()` raises an error on a
+failed assertion. In a testthat project, place the interaction inside a
+`test_that()` block and use `expect_identical()` and `expect_true()` for
+structured failure reports.
+
+## Keep tests deterministic
+
+- Fix the virtual terminal width and height: layout and wrapping depend on
+  dimensions. `screen_text()` returns one string per row.
+- `type()` sends text to the focused widget. Use `focus("#name")` when an
+  application has several inputs; `press()` takes names such as `"tab"` and
+  `"enter"`.
+- Use `advance(seconds)` for simulated timers and `resize(width, height)`
+  for layout checks. Background workers run real processes and need separate
+  waiting and timeout checks; they are not simulated by the headless clock.
+- Always stop the pilot. A helper function with `on.exit()` cleans up even
+  when an assertion fails.
+- Screen snapshots can complement state assertions. Inspect diffs before
+  accepting changed snapshots.
+
+Headless tests cover application behavior and rendering. They do not establish
+real terminal input, escape handling or cleanup on every host. See the
+[platform validation matrix](https://github.com/menshikovs/termr/blob/main/docs/platform-testing.md)
+for terminal checks and limitations.
+
+## References and next steps
+
+- [`test_app()` and Pilot methods](../reference/test_app.html).
+- [Build your first terminal form](getting-started.html).
+- [Test table navigation and sorting](terminal-dashboards.html).
+- [Full testing guide](https://github.com/menshikovs/termr/blob/main/docs/testing.md).
+- [Original runnable recipe](https://github.com/menshikovs/termr/blob/main/docs/agent-recipes/04-headless-testing.md).

@@ -1,0 +1,27 @@
+{{#includes}}{{{in_header}}}{{/includes}}
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="{{site.title}}" />
+<meta property="og:locale" content="en_US" />
+{{^opengraph.description}}
+<meta name="description" content="{{yaml.social_description}}" />
+<meta property="og:description" content="{{yaml.social_description}}" />
+{{/opengraph.description}}
+{{^opengraph.twitter.card}}
+{{#opengraph.image}}<meta name="twitter:card" content="summary_large_image" />{{/opengraph.image}}
+{{^opengraph.image}}<meta name="twitter:card" content="summary" />{{/opengraph.image}}
+{{/opengraph.twitter.card}}
+<meta name="twitter:title" content="{{{pagetitle}}}" />
+{{#opengraph.description}}
+<meta name="twitter:description" content="{{.}}" />
+{{/opengraph.description}}
+{{^opengraph.description}}
+<meta name="twitter:description" content="{{yaml.social_description}}" />
+{{/opengraph.description}}
+{{#opengraph.image}}
+<meta name="twitter:image" content="{{src}}" />
+{{/opengraph.image}}
+{{#yaml.software_jsonld}}
+<script type="application/ld+json">
+{{{yaml.software_jsonld}}}
+</script>
+{{/yaml.software_jsonld}}

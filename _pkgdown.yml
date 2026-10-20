@@ -4,6 +4,10 @@ template:
   bootstrap: 5
   params:
     google_site_verification: "y-1CU_OpfbxmAGDGQm3qi8Xc9RcalnzCOzJ3CZ2VA_o"
+  includes:
+    in_header: |
+      <meta name="msvalidate.01" content="ED124DAA8CF210E4D6CB70008D1A15B1" />
+      <meta name="keywords" content="termr, R package, terminal UI, TUI, reactive UI, terminal dashboards, terminal widgets, console applications" />
   opengraph:
     image:
       src: widget-showcase.png

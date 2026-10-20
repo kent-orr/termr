@@ -27,7 +27,10 @@ jobs:
           extra-packages: any::pkgdown, local::.
           needs: website
       - name: Build site
-        run: pkgdown::build_site_github_pages(dest_dir = "site", new_process = FALSE, install = FALSE)
+        run: source("tools/build-site.R")
+        shell: Rscript {0}
+      - name: Validate site metadata
+        run: source("tools/validate-site-seo.R")
         shell: Rscript {0}
       - name: Deploy to GitHub Pages
         if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'

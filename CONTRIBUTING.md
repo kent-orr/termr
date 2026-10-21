@@ -33,15 +33,20 @@ with the maintainer before implementation:
 Discussion helps avoid spending time on changes that might not be accepted.
 A proposal does not guarantee implementation or acceptance.
 
-Read the [README](README.md), [getting started guide](docs/getting-started.md),
+Read the [README](https://github.com/menshikovs/termr/blob/main/README.md), [getting started guide](https://github.com/menshikovs/termr/blob/main/docs/getting-started.md),
 [repository instructions](AGENTS.md), [architecture](ARCHITECTURE.md), and
-[API stability policy](docs/stability.md), then the guide relevant to your change
-under [docs/](docs/).
+[API stability policy](https://github.com/menshikovs/termr/blob/main/docs/stability.md), then the guide relevant to your change
+under [docs/](https://github.com/menshikovs/termr/tree/main/docs).
 
 ## Development environment
 
 Fork the repository, clone your fork, and create a branch from `main`.
-Use R >= 4.1; [DESCRIPTION](DESCRIPTION) is the dependency source of truth.
+Use R >= 4.1; [DESCRIPTION](https://github.com/menshikovs/termr/blob/main/DESCRIPTION) is the dependency source of truth.
+To use termr, install the stable CRAN release with `install.packages("termr")`.
+See the [installation guide](https://github.com/menshikovs/termr/blob/main/README.md#installation)
+for R-universe and GitHub alternatives. For contributions, work from your local
+checkout so tests exercise your changes.
+
 From R in the repository root, install any missing packages listed in `Imports`
 and `testthat` for local testing. Install packages from `Suggests` only as needed
 for the tests or integrations you are working on. DBI, RSQLite, jsonlite, and
@@ -56,7 +61,7 @@ Rscript -e "testthat::test_local('.', filter = 'button', reporter = 'summary')"
 `test_local()` loads the source package for you. Install `roxygen2` if changing
 R API documentation. No IDE or additional tooling is required for ordinary
 fixes. Interactive apps need R or Rscript in a real terminal; see the
-[terminal guide](docs/terminal.md).
+[terminal guide](https://github.com/menshikovs/termr/blob/main/docs/terminal.md).
 
 ## Code conventions
 
@@ -69,8 +74,8 @@ Keep terminal I/O in drivers, layout separate from painting, and widget
 behavior in widgets and the app layer, following [ARCHITECTURE.md](ARCHITECTURE.md).
 Keep changes focused and preserve unrelated work. Application and extension
 examples must use exported, documented APIs, without `termr:::` or internal
-registries. See the [API inventory](docs/api-inventory.md), [NAMESPACE](NAMESPACE),
-and [man/](man/) for the public reference.
+registries. See the [API inventory](https://github.com/menshikovs/termr/blob/main/docs/api-inventory.md), [NAMESPACE](https://github.com/menshikovs/termr/blob/main/NAMESPACE),
+and [man/](https://github.com/menshikovs/termr/tree/main/man) for the public reference.
 
 ## Testing and validation
 
@@ -89,7 +94,7 @@ Rscript tools/validate-dev.R
 ```
 
 The second command explicitly enables full non-CRAN workloads and writes a
-summary under R's temporary directory. See [testing](docs/testing.md) for
+summary under R's temporary directory. See [testing](https://github.com/menshikovs/termr/blob/main/docs/testing.md) for
 workload modes, snapshots, headless tests, and platform limits. Inspect snapshot
 diffs before accepting updates.
 
@@ -102,17 +107,17 @@ R CMD build .
 R CMD check --no-manual --as-cran termr_<version>.tar.gz
 ```
 
-The existing [R-CMD-check workflow](.github/workflows/R-CMD-check.yaml) runs
+The existing [R-CMD-check workflow](https://github.com/menshikovs/termr/blob/main/.github/workflows/R-CMD-check.yaml) runs
 package checks and extended regressions on Linux, macOS, and Windows, including
 R 4.1, oldrel-1, release, and devel on Linux. It also runs CRAN incoming checks
 with the PDF manual, optional SQL integration, Unix PTY tests, and Windows input
-regressions. The [pkgdown workflow](.github/workflows/pkgdown.yaml) builds the
+regressions. The [pkgdown workflow](https://github.com/menshikovs/termr/blob/main/.github/workflows/pkgdown.yaml) builds the
 documentation site on PRs. Separate worker and pre-RC diagnostic workflows
 are targeted tools, not required checks on ordinary PRs.
 
 For terminal changes, test the relevant behavior on an available host and
 record the OS, terminal, and result. Consult the
-[platform matrix and commands](docs/platform-testing.md) and [SSH guide](docs/ssh.md).
+[platform matrix and commands](https://github.com/menshikovs/termr/blob/main/docs/platform-testing.md) and [SSH guide](https://github.com/menshikovs/termr/blob/main/docs/ssh.md).
 Headless and parser tests do not certify a terminal host. You do not need to
 manually test every OS; CI provides cross-platform coverage. Explain unavailable
 checks and let the maintainer assess any remaining coverage. Documentation-only
@@ -120,7 +125,7 @@ changes normally need link and formatting checks, not the full R suite.
 
 ## API compatibility
 
-[docs/stability.md](docs/stability.md) is the canonical classification and
+[docs/stability.md](https://github.com/menshikovs/termr/blob/main/docs/stability.md) is the canonical classification and
 versioning policy, including event, command, snapshot, and deprecation contracts.
 Preserve backward compatibility for stable public APIs unless a breaking change
 has been explicitly discussed, approved, and scheduled for an appropriate release.
@@ -147,7 +152,7 @@ Do not edit generated `man/` files or `NAMESPACE` by hand. Avoid bare
 `Rscript tools/dev.R` when documentation regeneration is outside scope: its
 default mode regenerates documentation and runs tests.
 
-Add a concise [NEWS.md](NEWS.md) entry for user-visible fixes and features,
+Add a concise [NEWS.md](https://github.com/menshikovs/termr/blob/main/NEWS.md) entry for user-visible fixes and features,
 experimental API changes, deprecations, and breaking changes. Include migration
 guidance where needed; minor editorial or internal-only changes usually do not
 need a NEWS entry. Coordinate release placement with the maintainer.
@@ -176,4 +181,4 @@ Review happens as maintainer capacity allows, without fixed issue or PR response
 times. The maintainer may request changes, defer a proposal, or decline work
 that does not fit the project. Small, well-explained contributions are easier
 to review and maintain. GitHub administrators can find the remaining repository
-configuration steps in [Community setup](.github/COMMUNITY_SETUP.md).
+configuration steps in [Community setup](https://github.com/menshikovs/termr/blob/main/.github/COMMUNITY_SETUP.md).

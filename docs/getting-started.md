@@ -3,7 +3,8 @@
 termr builds reactive terminal applications around R workflows. This tutorial
 starts with a form; the same app, layout and event model supports data
 explorers and dashboards. See the [README installation instructions](../README.md#installation)
-for the recommended R-universe and development GitHub installation methods.
+for the recommended stable CRAN release, R-universe alternative, and GitHub
+development installation methods.
 
 ## Your first app
 

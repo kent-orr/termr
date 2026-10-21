@@ -1,12 +1,19 @@
 # 1.0 release readiness
 
+## Publication update (2026-10-21)
+
+termr 1.0.1 is now published on [CRAN](https://CRAN.R-project.org/package=termr).
+Use the [installation guide](../README.md#installation) for current installation
+methods. The RC1 and audit records below are historical evidence; their release
+blockers and validation results describe those earlier trees, not current status.
+
 ## RC1 status (2026-10-08)
 
 The immutable tag `v1.0.0-rc1` points to
 `1846527d3968cdd12fa9900bbe80a9f2a89a1a3e`; its DESCRIPTION intentionally
-retains package version `0.9.0.9000`. Final 1.0 has not shipped. The validated
-source and post-RC documentation changes must be distinguished when reviewing
-new validation results.
+retains package version `0.9.0.9000`. At that point, final 1.0 had not shipped.
+The validated source and post-RC documentation changes must be distinguished
+when reviewing new validation results.
 
 | Gate | Result | Evidence / limitation |
 |---|---|---|

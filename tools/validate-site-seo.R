@@ -36,7 +36,9 @@ cat("PASS homepage application renders and Quit button exits headlessly\n")
 
 pages <- c("index.html", "articles/getting-started.html",
            "articles/terminal-dashboards.html", "articles/testing-terminal-ui.html",
-           "reference/app.html", "reference/data_table.html", "reference/test_app.html")
+           "reference/app.html", "reference/data_table.html", "reference/test_app.html",
+           "CONTRIBUTING.html", "SECURITY.html", "COMMUNITY_SETUP.html",
+           "ARCHITECTURE.html", "README.zh-CN.html", "CODE_OF_CONDUCT.html")
 titles <- character()
 for (page in pages) {
   path <- file.path(site, page)
@@ -78,7 +80,9 @@ for (page in pages) {
     if (!file.exists(target)) stop("Broken local link in ", page, ": ", link)
     if (length(parts) > 1L && nzchar(parts[[2]]) && grepl("\\.html$", target)) {
       ids <- xml2::xml_attr(xml2::xml_find_all(xml2::read_html(target), "//*[@id]"), "id")
-      if (!utils::URLdecode(parts[[2]]) %in% ids) stop("Missing fragment in ", page, ": ", link)
+      fragment <- utils::URLdecode(parts[[2]])
+      Encoding(fragment) <- "UTF-8"
+      if (!fragment %in% ids) stop("Missing fragment in ", page, ": ", link)
     }
   }
   cat("PASS metadata and local links:", page, "\n")

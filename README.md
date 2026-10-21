@@ -1,6 +1,7 @@
 # termr — Reactive Terminal UI Framework for R
 
 ![R](https://img.shields.io/badge/R-%E2%89%A5%204.1-276DC3?style=flat-square&logo=r&logoColor=white)
+[![CRAN status](https://www.r-pkg.org/badges/version/termr)](https://CRAN.R-project.org/package=termr)
 ![OS](https://img.shields.io/badge/OS-Linux%20%7C%20macOS%20%7C%20Windows-blue)
 [![DeepWiki](https://img.shields.io/badge/DeepWiki-termr-blue)](https://deepwiki.com/menshikovs/termr)
 
@@ -102,9 +103,17 @@ screen snapshots; static rendering does not start an app event loop.
 
 ## Installation
 
-termr requires R >= 4.1 and is not currently published on CRAN.
+termr requires R >= 4.1.
 
-### Recommended: R-universe
+### CRAN (recommended stable release)
+
+Install the latest stable release from [CRAN](https://CRAN.R-project.org/package=termr):
+
+```r
+install.packages("termr")
+```
+
+### R-universe (alternative)
 
 R-universe provides an R package repository that works with the standard
 `install.packages()` function. Install termr and its dependencies with:
@@ -119,9 +128,9 @@ install.packages(
 )
 ```
 
-### Development version: GitHub
+### GitHub (development version)
 
-To install the latest development version from GitHub, first install
+To install the development version from GitHub, first install
 `remotes`, then run:
 
 ```r

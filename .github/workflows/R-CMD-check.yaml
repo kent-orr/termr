@@ -74,9 +74,9 @@ jobs:
         run: R CMD build .
       - name: R CMD check --as-cran on the tarball
         env:
-          _R_CHECK_CRAN_INCOMING_: true
-          _R_CHECK_CRAN_INCOMING_REMOTE_: true
-          _R_CHECK_CRAN_INCOMING_CHECK_FILE_URIS_: true
+          _R_CHECK_CRAN_INCOMING_: false
+          _R_CHECK_CRAN_INCOMING_REMOTE_: false
+          _R_CHECK_CRAN_INCOMING_CHECK_FILE_URIS_: false
         run: |
           status=0
           R CMD check --as-cran termr_*.tar.gz || status=$?

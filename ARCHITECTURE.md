@@ -284,8 +284,8 @@ root widget is temporarily wrapped in a Screen, then detached on exit;
 layout assigns regions for the requested size. Text, Markdown, styled HTML and
 SVG use this buffer; optional jsonlite serializes screen/structural snapshots,
 and optional knitr supplies as-is Markdown/HTML for reports. Static rendering
-does not advance timers or start workers. See [static export](docs/export.md)
-and [testing](docs/testing.md).
+does not advance timers or start workers. See [static export](https://github.com/menshikovs/termr/blob/main/docs/export.md)
+and [testing](https://github.com/menshikovs/termr/blob/main/docs/testing.md).
 
 ## Extension points
 
@@ -303,6 +303,6 @@ and [testing](docs/testing.md).
 | Accessibility | theme flags `mono` / `strong_focus` in `resolve_style()` and `computed_style()`; `motion_reduced()` |
 
 This contributor table includes internal implementation hooks as well as
-public protocols. External packages should follow [Extensions](docs/extensions.md)
-and the [stability classification](docs/stability.md); direct access to
+public protocols. External packages should follow [Extensions](https://github.com/menshikovs/termr/blob/main/docs/extensions.md)
+and the [stability classification](https://github.com/menshikovs/termr/blob/main/docs/stability.md); direct access to
 registries, parsers or dirty-region helpers is internal.

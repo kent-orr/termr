@@ -1,0 +1,8 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Questions, usage help, and early ideas
+    url: https://github.com/menshikovs/termr/discussions
+    about: Ask the community in GitHub Discussions.
+  - name: Report a security vulnerability privately
+    url: https://github.com/menshikovs/termr/security/advisories/new
+    about: Use GitHub Private Vulnerability Reporting. If unavailable, withhold sensitive details until enabled; see SECURITY.md. Do not use public Issues or Discussions.

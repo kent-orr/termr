@@ -1,0 +1,85 @@
+name: Bug report
+description: Report a reproducible problem with termr.
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for helping improve termr. Search existing issues before reporting.
+        For usage help, use [Discussions](https://github.com/menshikovs/termr/discussions).
+        For vulnerabilities, follow [SECURITY.md](https://github.com/menshikovs/termr/blob/main/SECURITY.md) and withhold sensitive details from public issues.
+        Remove credentials and private data from examples, logs, and screenshots.
+  - type: textarea
+    id: description
+    attributes:
+      label: Bug description
+      description: What went wrong, and what were you trying to do?
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: Include launch commands and input actions. If intermittent, describe what you know and how often it occurs.
+      placeholder: |
+        1. Start R or Rscript in...
+        2. Run...
+        3. Press or click...
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+      description: Fill this in if the result is not already clear from the bug description.
+  - type: input
+    id: termr_version
+    attributes:
+      label: termr version
+      description: 'Run packageVersion("termr"); include a commit or installation source if known.'
+    validations:
+      required: true
+  - type: input
+    id: r_version
+    attributes:
+      label: R version
+      description: Run R.version.string.
+    validations:
+      required: true
+  - type: input
+    id: os
+    attributes:
+      label: Operating system
+      description: Include the OS version (Linux distribution, macOS, or Windows).
+    validations:
+      required: true
+  - type: textarea
+    id: terminal
+    attributes:
+      label: Terminal environment
+      description: |
+        For terminal problems, name the emulator and version, shell, and how you start R (R, Rterm, Rscript, or an IDE terminal tab).
+        Include TERM/COLORTERM if available. Say whether you use SSH (client and server OS), tmux, or screen (versions if known), and whether it also happens outside that session.
+        See the [platform guide](https://github.com/menshikovs/termr/blob/main/docs/platform-testing.md) and [SSH guide](https://github.com/menshikovs/termr/blob/main/docs/ssh.md).
+  - type: textarea
+    id: example
+    attributes:
+      label: Minimal reproducible R example
+      description: Optional but helpful. Use built-in or synthetic data; if you cannot provide an example, the steps above are still welcome.
+      render: r
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Relevant logs or screenshots
+      description: Paste error messages or attach files. Redact sensitive data first.
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional context
+      description: For example, a regression version, workaround, or related issue.

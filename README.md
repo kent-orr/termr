@@ -194,6 +194,14 @@ Start with [Getting started](https://github.com/menshikovs/termr/blob/main/docs/
 [Agent recipes](https://github.com/menshikovs/termr/tree/main/docs/agent-recipes) provide verified end-to-end examples; the [termr Codex skill](https://github.com/menshikovs/termr/tree/main/.agents/skills/termr) helps agents build and test applications in other repositories.
 [ARCHITECTURE.md](https://github.com/menshikovs/termr/blob/main/ARCHITECTURE.md) describes the implementation for contributors.
 
+## Community
+
+Contributions are welcome: see the [contributor guide](https://github.com/menshikovs/termr/blob/main/CONTRIBUTING.md)
+and [Code of Conduct](https://github.com/menshikovs/termr/blob/main/CODE_OF_CONDUCT.md).
+Use [Discussions](https://github.com/menshikovs/termr/discussions) for questions,
+usage help, and early ideas. Report vulnerabilities privately following the
+[security policy](https://github.com/menshikovs/termr/blob/main/SECURITY.md).
+
 ## License
 
 MIT

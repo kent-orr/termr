@@ -1,0 +1,40 @@
+name: Feature request
+description: Propose a concrete improvement to termr.
+labels: [enhancement]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use [Discussions](https://github.com/menshikovs/termr/discussions) for early ideas and usage help.
+        Significant features, new widgets, dependencies, and API or architecture changes require discussion with the maintainer before implementation.
+        See [CONTRIBUTING.md](https://github.com/menshikovs/termr/blob/main/CONTRIBUTING.md). Submitting a request does not guarantee implementation.
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem or use case
+      description: What workflow is difficult today, and who would benefit?
+    validations:
+      required: true
+  - type: textarea
+    id: solution
+    attributes:
+      label: Proposed solution
+      description: Describe the desired behavior and how it fits termr.
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: Include existing APIs or workarounds you have tried.
+  - type: textarea
+    id: example
+    attributes:
+      label: Example R API or code
+      description: Optional sketch of how the feature could be used.
+      render: r
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional context
+      description: Related discussions, screenshots, or compatibility considerations.

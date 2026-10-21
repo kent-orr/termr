@@ -4,6 +4,13 @@ Audit date: 2026-10-19. This report records repository content and search
 results observed on that date. Search results vary by engine, locale, query,
 and time; they do not establish stable ranking or comprehensive visibility.
 
+Publication update (2026-10-21): termr 1.0.1 is now available on
+[CRAN](https://CRAN.R-project.org/package=termr), the recommended installation
+method. The [package website](https://menshikovs.github.io/termr/) is the current
+documentation entry point. The findings below retain the earlier audit's
+observations, including the installation and website state at that time;
+see the [current installation guide](../README.md#installation).
+
 ## Findings
 
 ### Repository metadata

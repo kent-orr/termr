@@ -1,8 +1,9 @@
 # termr
 
-[English](README.md) | **简体中文**
+[English](https://github.com/menshikovs/termr/blob/main/README.md) | **简体中文**
 
 ![R](https://img.shields.io/badge/R-%E2%89%A5%204.1-276DC3?style=flat-square&logo=r&logoColor=white)
+[![CRAN status](https://www.r-pkg.org/badges/version/termr)](https://CRAN.R-project.org/package=termr)
 [![DeepWiki](https://img.shields.io/badge/DeepWiki-termr-blue)](https://deepwiki.com/menshikovs/termr)
 
 > 面向 R 语言的终端用户界面（TUI）框架，提供响应式组件，
@@ -70,21 +71,36 @@ run_example("data-workbench")
 
 ## 安装
 
-termr 要求 R >= 4.1。当 termr 在 CRAN 上发布后，可使用以下命令安装正式版本：
+termr 要求 R >= 4.1。
+
+### CRAN（推荐的稳定版本）
+
+从 [CRAN](https://CRAN.R-project.org/package=termr) 安装最新稳定版本：
 
 ```r
 install.packages("termr")
 ```
 
-从 GitHub 安装：
+### R-universe（替代安装方式）
+
+也可以通过项目现有的 R-universe 仓库安装 termr 及其依赖：
 
 ```r
-remotes::install_github("menshikovs/termr")
+install.packages(
+  "termr",
+  repos = c(
+    "https://menshikovs.r-universe.dev",
+    "https://cloud.r-project.org"
+  )
+)
 ```
 
-或者安装本地检出的源码：
+### GitHub（开发版本）
+
+如需开发版本，先安装 `remotes`，再从 GitHub 安装：
 
 ```r
+install.packages("remotes")
 remotes::install_github("menshikovs/termr")
 ```
 
@@ -110,7 +126,7 @@ pilot$stop()
 
 ## Agent 技能
 
-官方的 [termr Agent Skill](.agents/skills/termr/SKILL.md) 包含经过验证的 API 说明、操作示例、可运行的模板，以及无终端测试指南。
+官方的 [termr Agent Skill](https://github.com/menshikovs/termr/blob/main/.agents/skills/termr/SKILL.md) 包含经过验证的 API 说明、操作示例、可运行的模板，以及无终端测试指南。
 
 对于支持的 Agent，可以通过以下命令将其安装到项目范围内：
 
@@ -118,13 +134,13 @@ pilot$stop()
 npx skills add menshikovs/termr --skill termr --agent <agent> --copy
 ```
 
-也可以将其复制到对应 Agent 的技能目录。有关支持的目录路径、调用方式和验证状态，请参阅 [Agent 兼容性指南](docs/AGENT_COMPATIBILITY.md)。由于验证环境存在网络限制，安装命令未能在该环境中实际执行。
+也可以将其复制到对应 Agent 的技能目录。有关支持的目录路径、调用方式和验证状态，请参阅 [Agent 兼容性指南](https://github.com/menshikovs/termr/blob/main/docs/AGENT_COMPATIBILITY.md)。由于验证环境存在网络限制，安装命令未能在该环境中实际执行。
 
 ## API 稳定性
 
 termr 1.0.0 是首个稳定版本。核心应用与组件构建、基础布局、事件、命令、样式与主题、内存 DataTable 和基础测试功能构成稳定 API；不兼容的变更将在 NEWS 和迁移说明中明确列出。
 
-响应式依赖图、工作进程、编辑器、惰性数据源、数据库支持、静态导出和自定义扩展仍处于实验阶段。在 1.0 发布周期后期加入的工作流组件也仍属于实验性功能。完整分类见 [API 稳定性说明](https://github.com/41929424/termr/blob/main/docs/stability.md)；变更详情请参阅[迁移说明](https://github.com/41929424/termr/blob/main/docs/migration-to-1.0.md)和 [NEWS](NEWS.md)。
+响应式依赖图、工作进程、编辑器、惰性数据源、数据库支持、静态导出和自定义扩展仍处于实验阶段。在 1.0 发布周期后期加入的工作流组件也仍属于实验性功能。完整分类见 [API 稳定性说明](https://github.com/41929424/termr/blob/main/docs/stability.md)；变更详情请参阅[迁移说明](https://github.com/41929424/termr/blob/main/docs/migration-to-1.0.md)和 [NEWS](https://github.com/menshikovs/termr/blob/main/NEWS.md)。
 
 ## 文档
 

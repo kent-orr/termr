@@ -26,7 +26,7 @@ Recheck current state before configuring; this is a dated observation.
 1. In **Settings > Advanced Security**, enable **Private vulnerability reporting**.
    Confirm the [private report form](https://github.com/menshikovs/termr/security/advisories/new)
    is available. Update the dated disabled-status paragraph in
-   [SECURITY.md](../SECURITY.md) after enabling it.
+   [SECURITY.md](https://github.com/menshikovs/termr/blob/main/SECURITY.md) after enabling it.
 2. Keep **Discussions** enabled under **Settings > General > Features** for
    questions, usage help, and early ideas. Keep Issues enabled for bug reports
    and concrete proposals.
@@ -44,10 +44,10 @@ See GitHub's [private reporting configuration guide](https://docs.github.com/en/
   Protect `main` against deletion and force pushes, and require PRs for external
   changes. Avoid overlapping or contradictory protection rules.
 - Require successful checks from the existing
-  [R-CMD-check workflow](workflows/R-CMD-check.yaml): the six OS/R matrix jobs,
+  [R-CMD-check workflow](https://github.com/menshikovs/termr/blob/main/.github/workflows/R-CMD-check.yaml): the six OS/R matrix jobs,
   `CRAN incoming (R-devel, built tarball)`, `SQL integration (DBI + SQLite)`,
   both `PTY integration` jobs, and `Windows input regressions`. Require the
-  [pkgdown](workflows/pkgdown.yaml) build for documentation validation as well.
+  [pkgdown](https://github.com/menshikovs/termr/blob/main/.github/workflows/pkgdown.yaml) build for documentation validation as well.
   Select the exact check names displayed on a recent PR; do not guess their
   workflow prefixes. All these workflows run on ordinary PRs to `main`.
 - Do not require `worker-probe` or `pre-rc-targeted-diagnostics`: they run on

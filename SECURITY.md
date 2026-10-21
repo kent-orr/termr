@@ -10,7 +10,7 @@ sensitive exploit details in public pull requests.
 Private reporting was verified as **disabled on 2026-10-21**. The maintainer
 must enable it under repository **Settings > Advanced Security > Private
 vulnerability reporting** before this channel can accept reports; see the
-[setup checklist](.github/COMMUNITY_SETUP.md). If the form is unavailable,
+[setup checklist](https://github.com/menshikovs/termr/blob/main/.github/COMMUNITY_SETUP.md). If the form is unavailable,
 withhold sensitive details until private reporting is enabled. There is no
 alternative email security reporting channel.
 
@@ -37,7 +37,7 @@ information.
 
 Security maintenance prioritizes the latest stable release. Older versions may
 receive fixes at the maintainer's discretion; multiple release branches are not
-promised. API stability classifications in [docs/stability.md](docs/stability.md)
+promised. API stability classifications in [docs/stability.md](https://github.com/menshikovs/termr/blob/main/docs/stability.md)
 describe compatibility and are separate from security reporting: concerns in
 stable, experimental, and internal code can all be reported privately.
 

@@ -86,6 +86,9 @@ Existing URL tags are checked for conflicts rather than overwritten. Redirect
 pages retain their canonical destinations and intentional `noindex` directives;
 verification assets remain unchanged. The sitemap is not rewritten.
 
+The site validator also checks links in the rendered community documents,
+including UTF-8 fragments in the Chinese README.
+
 A read-only public URL check on 2026-10-20 found that `/termr/` and
 `/termr/index.html` both returned HTTP 200 with identical HTML; `/termr`
 redirected to `/termr/`. These homepage aliases already exist on the published

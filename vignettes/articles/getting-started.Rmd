@@ -9,17 +9,15 @@ tutorial uses stable exported APIs and the verified basic application recipe.
 
 ## Install termr
 
-Use R 4.1 or newer. termr is available through R-universe, not CRAN:
+Use R 4.1 or newer. Install the recommended stable release from
+[CRAN](https://CRAN.R-project.org/package=termr):
 
 ```r
-install.packages(
-  "termr",
-  repos = c("https://menshikovs.r-universe.dev", "https://cloud.r-project.org")
-)
+install.packages("termr")
 ```
 
-For development installation and platform limits, see the
-[installation guide](../index.html#installation) and
+For the R-universe alternative, GitHub development installation, and platform
+limits, see the [installation guide](../index.html#installation) and
 [platform matrix](https://github.com/menshikovs/termr/blob/main/docs/platform-testing.md).
 
 ## Compose your first application

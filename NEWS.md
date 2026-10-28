@@ -1,3 +1,37 @@
+# termr 1.0.4
+
+## Shiny-shaped layer, phase 3: layout
+
+Screens can be laid out the way Shiny pages are, with no `style()` calls
+and no `fr` units:
+
+```r
+ui <- fluidPage(
+  titlePanel("Sales"),
+  sidebarLayout(
+    sidebarPanel(selectInput("year", "Year", c("2025", "2026"))),
+    mainPanel(tableOutput("tbl"))
+  ),
+  row(col(6, metric("Rows", 120)), col(6, metric("Total", 4500)))
+)
+```
+
+* `row()` and `col(width, ..., offset)` give Shiny's 12-column grid on top
+  of `fr` units: a row whose columns add up to less than 12 leaves the rest
+  empty, `offset` leaves empty columns before a column, and columns past 12
+  wrap onto a new line. `fluidRow()` is `row()`. `row(fill = TRUE)` takes
+  the height left over by the other rows, so a long table scrolls instead
+  of running off the screen. The layout column is `col()` because
+  `column()` is the `data_table()` column spec, which is unchanged.
+* `row()` and `col()` mask `base::row()` and `base::col()` when termr is
+  attached; given a matrix or data frame they call the base functions.
+* `fluidPage()`, `titlePanel()`, `sidebarLayout()`, `sidebarPanel()`,
+  `mainPanel()`, `wellPanel()`, `h1()` to `h4()`, `p()`, `hr()` and `br()`.
+* `tabsetPanel(id = )` and `tabPanel(title, ..., value = )`: `input$id` is
+  the value of the selected tab, `observeEvent(input$id, ...)` reacts to a
+  switch, and `updateTabsetPanel()` switches tabs from the server.
+* README: a Shiny-style version of the quick start.
+
 # termr 1.0.3
 
 ## Shiny-shaped layer, phase 2: one reactive graph

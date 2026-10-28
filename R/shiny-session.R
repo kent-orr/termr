@@ -21,7 +21,8 @@ current_registration_target <- function() {
 #'
 #' `shiny_input()` and `shiny_output()` wrap an [App] in the `input` and
 #' `output` objects a Shiny server function receives. `input$name` reads
-#' the `value` of the widget with id `name`; inside a reactive context
+#' the `value` of the widget with id `name` (for [tabsetPanel()], the value
+#' of the selected tab); inside a reactive context
 #' (`reactive()`, `observe()`, a render function or a widget bound to a
 #' function) the read is a dependency, so the context re-runs when the user
 #' changes the widget. `output$name <- x` writes the widget's natural field:
@@ -93,6 +94,7 @@ shiny_output_field <- function(widget) {
 
 shiny_read <- function(x, name) {
   widget <- shiny_widget(x, name)
+  if (inherits(widget, "Tabs")) return(tabs_selected_value(widget))
   if (!has_field(widget, "value")) {
     stop(sprintf("%s has no value to read; react to it with observeEvent() instead.", widget$format()),
          call. = FALSE)

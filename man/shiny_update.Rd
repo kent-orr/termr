@@ -9,6 +9,7 @@
 \alias{updateSelectInput}
 \alias{updateRadioButtons}
 \alias{updateActionButton}
+\alias{updateTabsetPanel}
 \title{Change a Shiny-style input from the server}
 \usage{
 updateTextInput(
@@ -36,6 +37,8 @@ updateSelectInput(session, inputId, label = NULL, selected = NULL)
 updateRadioButtons(session, inputId, label = NULL, selected = NULL)
 
 updateActionButton(session, inputId, label = NULL)
+
+updateTabsetPanel(session, inputId, selected = NULL)
 }
 \arguments{
 \item{session}{The \link{App} (Shiny's \code{session}); defaults to the running app
@@ -49,7 +52,8 @@ when the first argument is the id instead.}
 
 \item{placeholder}{New placeholder text.}
 
-\item{selected}{New selected value.}
+\item{selected}{New selected value; for \code{updateTabsetPanel()}, the
+value of the tab to switch to.}
 }
 \value{
 The widget, invisibly.

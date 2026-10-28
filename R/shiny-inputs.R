@@ -288,7 +288,8 @@ update_shiny_label <- function(widget, label) {
 #' @param label New label text.
 #' @param value New value.
 #' @param placeholder New placeholder text.
-#' @param selected New selected value.
+#' @param selected New selected value; for `updateTabsetPanel()`, the
+#'   value of the tab to switch to.
 #' @return The widget, invisibly.
 #' @name shiny_update
 #' @seealso [shiny_inputs], [observeEvent()].
@@ -369,5 +370,13 @@ updateRadioButtons <- function(session, inputId, label = NULL, selected = NULL) 
 updateActionButton <- function(session, inputId, label = NULL) {
   w <- shiny_update_target(session, inputId, "Button")
   if (!is.null(label)) w$label <- label
+  invisible(w)
+}
+
+#' @rdname shiny_update
+#' @export
+updateTabsetPanel <- function(session, inputId, selected = NULL) {
+  w <- shiny_update_target(session, inputId, "Tabs")
+  if (!is.null(selected)) w$activate(tab_index_by_value(w, selected))
   invisible(w)
 }

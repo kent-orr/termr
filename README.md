@@ -55,6 +55,46 @@ and the Quit button or `q` to exit. `signal()` is part of the experimental
 reactive graph; core app, layout, event and in-memory table APIs are intended
 to be stable. To inspect a data frame directly, call `browse_data(mtcars)`.
 
+### If you know Shiny
+
+The same app can be written the way Shiny apps are: a UI laid out with
+`row()` and `col()` on a 12-column grid, and a server function that reacts
+to `input` and fills `output`.
+
+```r
+library(termr)
+
+ui <- fluidPage(
+  titlePanel("Motor Trend cars"),
+  row(
+    col(4, wellPanel(
+      selectInput("cyl", "Cylinders", c("All", "4", "6", "8")),
+      textOutput("summary"),
+      actionButton("quit", "Quit")
+    )),
+    col(8, tableOutput("cars")),
+    fill = TRUE
+  )
+)
+
+server <- function(input, output, session) {
+  cars <- reactive({
+    if (input$cyl == "All") mtcars else mtcars[mtcars$cyl == as.numeric(input$cyl), ]
+  })
+  output$cars <- renderTable(cars())
+  output$summary <- renderText(paste(nrow(cars()), "cars, mean mpg", round(mean(cars()$mpg), 1)))
+  observeEvent(input$quit, session$exit())
+}
+
+run(app(ui, server = server))
+```
+
+`col(4)` and `col(8)` split the row one third to two thirds at any terminal
+width. `fill = TRUE` lets the row take the rest of the screen, so the table
+scrolls instead of running off the bottom. The layout is called `col()`
+because `column()` already defines `data_table()` columns. `row()` and `col()`
+still work on matrices, as base R's do.
+
 ## Why termr
 
 - **Compose applications:** build a widget tree, handle typed events and

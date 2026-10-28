@@ -19,7 +19,8 @@ An object of class \code{termr_input} or \code{termr_output}.
 \description{
 \code{shiny_input()} and \code{shiny_output()} wrap an \link{App} in the \code{input} and
 \code{output} objects a Shiny server function receives. \code{input$name} reads
-the \code{value} of the widget with id \code{name}; inside a reactive context
+the \code{value} of the widget with id \code{name} (for \code{\link[=tabsetPanel]{tabsetPanel()}}, the value
+of the selected tab); inside a reactive context
 (\code{reactive()}, \code{observe()}, a render function or a widget bound to a
 function) the read is a dependency, so the context re-runs when the user
 changes the widget. \code{output$name <- x} writes the widget's natural field:

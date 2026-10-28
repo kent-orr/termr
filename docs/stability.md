@@ -44,6 +44,13 @@ NEWS and in [migration notes](migration-to-1.0.md).
   `sql_highlighter()`).
 - Reactive graph functions: `signal()`, `computed()`, `watch()`, `batch()`,
   `peek()`, `untracked()`, `dispose()`, and `update_signal()`.
+- The Shiny-shaped layer (see [termr for Shiny users](shiny.md)): the
+  `server =` argument of `app()`, `observeEvent()`, the input and output
+  constructors (`textInput()` to `tableOutput()`), the render functions,
+  `reactiveVal()`, `reactive()`, `observe()`, `isolate()`,
+  `invalidateLater()`, the `update*()` functions, `shiny_input()`,
+  `shiny_output()`, `state()`, and the layout functions (`row()`, `col()`,
+  `fluidPage()` to `br()`).
 - Workers and subprocesses: `run_worker()`, `run_process()`, and worker
   lifecycle details.
 - Custom widget construction and low-level widget subclassing through

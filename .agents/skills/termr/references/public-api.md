@@ -51,7 +51,8 @@ in `event$data$row`.
 
 ## Experimental and internal APIs
 
-The reactive graph (`signal()`, `computed()`, and related functions), worker
+The reactive graph (`signal()`, `computed()`, and related functions), the
+Shiny-shaped layer (see [Shiny-style apps](shiny.md)), worker
 and subprocess APIs, SQL and database support, lazy table sources, custom
 widgets/layouts, and static export are documented as experimental in termr's
 stability guide. Avoid relying on them for a routine app unless the feature

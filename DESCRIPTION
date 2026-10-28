@@ -1,6 +1,6 @@
 Package: termr
 Title: Reactive Terminal UI Framework for R
-Version: 1.0.4
+Version: 1.0.5
 Authors@R:
     person("Akims", "Mensikovs", email = "akimm7926@gmail.com",
            role = c("aut", "cre", "cph"))

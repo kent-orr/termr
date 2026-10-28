@@ -41,6 +41,40 @@ run(ui)
 
 使用方向键在表格行之间移动，按 Tab 切换焦点，按 F1 查看帮助，点击“Quit”按钮或按 `q` 退出。`signal()` 属于实验性的响应式依赖图；核心应用、布局、事件和内存表格 API 计划保持稳定。若只想直接查看数据框，可调用 `browse_data(mtcars)`。
 
+### 如果你熟悉 Shiny
+
+同一个应用也可以按 Shiny 的方式编写：用 `row()` 和 `col()` 在 12 列网格上布局 UI，再用一个 server 函数响应 `input` 并填充 `output`。
+
+```r
+library(termr)
+
+ui <- fluidPage(
+  titlePanel("Motor Trend cars"),
+  row(
+    col(4, wellPanel(
+      selectInput("cyl", "Cylinders", c("All", "4", "6", "8")),
+      textOutput("summary"),
+      actionButton("quit", "Quit")
+    )),
+    col(8, tableOutput("cars")),
+    fill = TRUE
+  )
+)
+
+server <- function(input, output, session) {
+  cars <- reactive({
+    if (input$cyl == "All") mtcars else mtcars[mtcars$cyl == as.numeric(input$cyl), ]
+  })
+  output$cars <- renderTable(cars())
+  output$summary <- renderText(paste(nrow(cars()), "cars, mean mpg", round(mean(cars()$mpg), 1)))
+  observeEvent(input$quit, session$exit())
+}
+
+run(app(ui, server = server))
+```
+
+无论终端多宽，`col(4)` 和 `col(8)` 都按三分之一与三分之二的比例分割这一行。`fill = TRUE` 让这一行占满屏幕剩余高度，因此表格会在行内滚动，而不会超出屏幕底部。布局函数命名为 `col()`，是因为 `column()` 已用于定义 `data_table()` 的列。与基础 R 一样，`row()` 和 `col()` 仍可用于矩阵。[面向 Shiny 用户的 termr 指南](docs/shiny.md)（英文）提供完整的对照表、以两种方式编写的同一应用，以及与 Shiny 的不同之处。这一 Shiny 风格层仍处于实验阶段。
+
 ## 为什么选择 termr
 
 - **组合式应用开发：** 构建组件树，处理类型化事件和命令，并将显示值绑定到响应式状态。
@@ -144,7 +178,7 @@ termr 1.0.0 是首个稳定版本。核心应用与组件构建、基础布局�
 
 ## 文档
 
-建议从[入门指南](https://github.com/41929424/termr/blob/main/docs/getting-started.md)开始，再依次了解[组件](https://github.com/41929424/termr/blob/main/docs/widgets.md)、[布局](https://github.com/41929424/termr/blob/main/docs/layout.md)、[事件](https://github.com/41929424/termr/blob/main/docs/events.md)、[响应式机制](https://github.com/41929424/termr/blob/main/docs/reactivity.md)、[样式](https://github.com/41929424/termr/blob/main/docs/styling.md)、[工作进程](https://github.com/41929424/termr/blob/main/docs/workers.md)和[扩展](https://github.com/41929424/termr/blob/main/docs/extensions.md)。
+建议从[入门指南](https://github.com/41929424/termr/blob/main/docs/getting-started.md)开始，再依次了解[组件](https://github.com/41929424/termr/blob/main/docs/widgets.md)、[布局](https://github.com/41929424/termr/blob/main/docs/layout.md)、[事件](https://github.com/41929424/termr/blob/main/docs/events.md)、[响应式机制](https://github.com/41929424/termr/blob/main/docs/reactivity.md)、[面向 Shiny 用户的指南](docs/shiny.md)、[样式](https://github.com/41929424/termr/blob/main/docs/styling.md)、[工作进程](https://github.com/41929424/termr/blob/main/docs/workers.md)和[扩展](https://github.com/41929424/termr/blob/main/docs/extensions.md)。
 
 [Agent 实战示例](https://github.com/41929424/termr/tree/main/docs/agent-recipes)提供经过验证的端到端示例；[termr Codex skill](https://github.com/41929424/termr/tree/main/.agents/skills/termr)可帮助 Agent 在其他仓库中构建和测试应用。[ARCHITECTURE.md](https://github.com/41929424/termr/blob/main/ARCHITECTURE.md)介绍内部实现，供项目贡献者参考。
 

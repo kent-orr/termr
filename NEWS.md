@@ -1,3 +1,26 @@
+# termr 1.0.5
+
+## Shiny-shaped layer, phase 4: documentation
+
+* `docs/shiny.md`, "termr for Shiny users": translation tables for app
+  structure, inputs, outputs, reactivity, updates and layout; one app
+  written both ways; what works differently from Shiny; reusing a UI and
+  server pair with id prefixes in place of Shiny modules; testing with
+  `test_app()`. Every R block in it is run by the test suite, which also
+  checks that the two versions of the example behave the same.
+* `docs/reactivity.md` is rewritten around what causes a change (a widget
+  field, a signal, an event, a timer, worker or animation), then the tick
+  model (handlers and timers run in a batch, at most one frame per tick,
+  only changed rectangles repainted), then signals and widget bindings. It
+  opens with a Shiny / Shiny layer / native table.
+* A fifth agent recipe, `docs/agent-recipes/05-shiny-app.md`, builds and
+  tests a Shiny-style app.
+* The bundled agent skill no longer turns away Shiny-shaped requests for a
+  terminal app. It has a Shiny-style reference (`references/shiny.md`) and
+  template (`assets/shiny-app.R`), both run by the test suite.
+* `docs/stability.md` lists the Shiny-shaped layer as experimental.
+* README.zh-CN: the Shiny-style quick start from the English README.
+
 # termr 1.0.4
 
 ## Shiny-shaped layer, phase 3: layout

@@ -93,7 +93,9 @@ run(app(ui, server = server))
 width. `fill = TRUE` lets the row take the rest of the screen, so the table
 scrolls instead of running off the bottom. The layout is called `col()`
 because `column()` already defines `data_table()` columns. `row()` and `col()`
-still work on matrices, as base R's do.
+still work on matrices, as base R's do. [termr for Shiny users](docs/shiny.md)
+has the full translation table, this kind of app written both ways, and what
+works differently from Shiny. The Shiny-shaped layer is experimental.
 
 ## Why termr
 
@@ -238,7 +240,7 @@ and [NEWS](NEWS.md) for changes.
 
 Start with [Getting started](https://github.com/menshikovs/termr/blob/main/docs/getting-started.md), then explore
 [widgets](https://github.com/menshikovs/termr/blob/main/docs/widgets.md), [layouts](https://github.com/menshikovs/termr/blob/main/docs/layout.md), [events](https://github.com/menshikovs/termr/blob/main/docs/events.md),
-[reactivity](https://github.com/menshikovs/termr/blob/main/docs/reactivity.md), [styling](https://github.com/menshikovs/termr/blob/main/docs/styling.md),
+[reactivity](https://github.com/menshikovs/termr/blob/main/docs/reactivity.md), [termr for Shiny users](docs/shiny.md), [styling](https://github.com/menshikovs/termr/blob/main/docs/styling.md),
 [workers](https://github.com/menshikovs/termr/blob/main/docs/workers.md) and [extensions](https://github.com/menshikovs/termr/blob/main/docs/extensions.md).
 [Agent recipes](https://github.com/menshikovs/termr/tree/main/docs/agent-recipes) provide verified end-to-end examples; the [termr Codex skill](https://github.com/menshikovs/termr/tree/main/.agents/skills/termr) helps agents build and test applications in other repositories.
 [ARCHITECTURE.md](https://github.com/menshikovs/termr/blob/main/ARCHITECTURE.md) describes the implementation for contributors.

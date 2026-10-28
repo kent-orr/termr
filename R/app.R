@@ -938,7 +938,13 @@ App <- R6::R6Class(
       invisible(count)
     },
 
-    refresh_screen = function() {
+    # Painting runs in a batch: a state change made while laying out or
+    # painting (a scroll offset, a cursor clamp) must not run reactive
+    # effects in the middle of the frame. They run once the frame is done
+    # and, if they changed anything, the next tick repaints.
+    refresh_screen = function() batch(private$paint_frame()),
+
+    paint_frame = function() {
       profiling <- isTRUE(getOption("termr.profile", FALSE))
       if (profiling) {
         previous_profile <- termr_env$profile
@@ -1150,6 +1156,8 @@ App <- R6::R6Class(
 # set_timeout() and friends can be called without passing the app.
 termr_env <- new.env(parent = emptyenv())
 termr_env$apps <- list()
+termr_env$deprecated <- list()
+termr_env$active_bindings <- list()
 termr_env$epoch <- 0
 termr_env$layout_epoch <- 0
 

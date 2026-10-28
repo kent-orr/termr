@@ -6,7 +6,7 @@
 #'
 #' @param name Type name (used by type selectors, e.g. `app$query("Counter")`).
 #' @param state A named list of state fields. Values created with
-#'   [reactive()] can have a watcher; plain values are reactive too.
+#'   [state()] can have a watcher; plain values are reactive too.
 #'   Fields are read and assigned as `self$<name>`.
 #' @param render `function(self)` returning the content: a string, a
 #'   character vector of lines or [span()]s.
@@ -29,7 +29,7 @@
 #' @examples
 #' Counter <- widget(
 #'   "Counter",
-#'   state = list(count = reactive(0L)),
+#'   state = list(count = state(0L)),
 #'   render = function(self) sprintf("Count: %d", self$count),
 #'   bindings = list(bind("up", "increment"), bind("down", "decrement")),
 #'   actions = list(
@@ -112,6 +112,10 @@ widget <- function(name, state = list(), render = NULL, compose = NULL,
     public = public,
     active = if (length(active)) active,
     private = list(
+      # Types made with widget() can share a class name but differ in state
+      # fields, so each gets its own active-binding cache key.
+      .binding_cache_key = paste0(name, "@", format(as.numeric(Sys.time()) * 1000, nsmall = 0), "-",
+                                  sample.int(.Machine$integer.max, 1L)),
       state_changed = function(name, old, new) {
         super$state_changed(name, old, new)
         watch <- spec$state[[name]]$watch

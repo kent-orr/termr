@@ -48,6 +48,7 @@ Widget <- R6::R6Class(
     initialize = function(..., id = NULL, classes = NULL, style = NULL,
                           disabled = FALSE, visible = TRUE) {
       private$.state <- new.env(parent = emptyenv())
+      track_active_bindings(self)
       private$.handlers <- list()
       private$.bindings <- list()
       private$.actions <- list()
@@ -232,11 +233,13 @@ Widget <- R6::R6Class(
       check_scalar_character(field, "field")
       check_function(fn, "fn")
       self_ref <- self
+      previous <- private$.reactive_bindings[[field]]
+      if (!is.null(previous)) previous$dispose()
       handle <- watch(function() {
         value <- fn()
-        self_ref[[field]] <- value
+        untracked(self_ref[[field]] <- value)
       })
-      private$.reactive_bindings <- c(private$.reactive_bindings, list(handle))
+      private$.reactive_bindings[[field]] <- handle
       invisible(self)
     },
 
@@ -395,19 +398,27 @@ Widget <- R6::R6Class(
     set_state = function(name, value) {
       old <- private$.state[[name]]
       if (identical(old, value)) return(invisible(FALSE))
-      before <- self$pseudo_states()
-      private$.state[[name]] <- value
-      # A change of state classes (disabled, pressed, ...) can restyle this
-      # widget and its descendants; it needs a new layout only if the widget's
-      # style differs in size-related properties between the two states.
-      after <- self$pseudo_states()
-      relayout <- FALSE
-      if (!identical(before, after)) {
-        relayout <- !private$same_layout_in(before, after)
-        bump_epoch(layout = relayout)
-      }
-      if (!relayout && name %in% self$paint_states) self$invalidate_paint() else self$invalidate()
-      private$state_changed(name, old, value)
+      # Nothing read while changing state is a dependency of the reactive
+      # context that caused the change.
+      untracked({
+        before <- self$pseudo_states()
+        private$.state[[name]] <- value
+        # A change of state classes (disabled, pressed, ...) can restyle this
+        # widget and its descendants; it needs a new layout only if the widget's
+        # style differs in size-related properties between the two states.
+        after <- self$pseudo_states()
+        relayout <- FALSE
+        if (!identical(before, after)) {
+          relayout <- !private$same_layout_in(before, after)
+          bump_epoch(layout = relayout)
+        }
+        if (!relayout && name %in% self$paint_states) self$invalidate_paint() else self$invalidate()
+        private$state_changed(name, old, value)
+      })
+      # Tell the signal graph: reactive contexts that read a field of this
+      # widget (label(function() paste(x$value)), renderText({ input$x }))
+      # re-run at the end of the current batch.
+      if (!is.null(private$.rx_node)) widget_state_changed(private$.rx_node)
       invisible(TRUE)
     },
 
@@ -688,6 +699,7 @@ Widget <- R6::R6Class(
     },
 
     .reactive_bindings = list(),
+    .rx_node = NULL,
 
     # Same layout properties in the two sets of pseudo states? Stylesheets
     # can have rules for any state, so with one present we say "no".
@@ -755,6 +767,69 @@ Widget <- R6::R6Class(
 )
 
 widget_private <- function(w) w$.__enclos_env__$private
+
+# Bridge between widget state and the signal graph ---------------------------
+#
+# Every public active binding of a widget (`x$value`, `x$text`, `x$valid`,
+# ...) is wrapped at construction so that reading it inside a reactive
+# context (a watch(), computed(), bound widget function or render function)
+# records a dependency on the widget. `set_state()` then invalidates those
+# contexts. One node per widget: any state change re-runs every context that
+# read any field of the widget. Re-runs that produce the same value are
+# no-ops, so this coarse grain costs a little work, never a wrong frame.
+
+track_active_bindings <- function(widget) {
+  for (name in active_binding_names(widget)) {
+    orig <- activeBindingFunction(name, widget)
+    makeActiveBinding(name, tracked_binding(orig, widget), widget)
+  }
+  invisible()
+}
+
+# Names of a widget's active bindings, cached per class (every instance of
+# an R6 class has the same bindings).
+active_binding_names <- function(widget) {
+  key <- widget_private(widget)$.binding_cache_key %||% class(widget)[[1]]
+  cached <- termr_env$active_bindings[[key]]
+  if (!is.null(cached)) return(cached)
+  names <- ls(widget, all.names = TRUE)
+  names <- names[vapply(names, bindingIsActive, logical(1), env = widget)]
+  termr_env$active_bindings[[key]] <- names
+  names
+}
+
+tracked_binding <- function(orig, widget) {
+  force(orig)
+  force(widget)
+  function(value) {
+    if (missing(value)) {
+      if (!is.null(rx$observer)) track(widget_node(widget))
+      return(orig())
+    }
+    orig(value)
+  }
+}
+
+# The widget's node in the signal graph, created on first use.
+widget_node <- function(widget) {
+  p <- widget_private(widget)
+  if (is.null(p$.rx_node)) {
+    # Plain fields only: `widget$type` is itself a tracked active binding.
+    id <- get0("id", envir = widget, inherits = FALSE)
+    node <- new_node("signal", name = paste0(class(widget)[[1]], if (!is.null(id)) paste0("#", id)))
+    node$dirty <- FALSE
+    p$.rx_node <- node
+  }
+  p$.rx_node
+}
+
+widget_state_changed <- function(node) {
+  node$writes <- node$writes + 1L
+  node$version <- node$version + 1L
+  invalidate_subs(node)
+  flush_effects()
+  invisible()
+}
 
 # Layout-time caches.
 #

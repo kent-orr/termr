@@ -30,17 +30,27 @@ test_that("textAreaInput creates a TextArea with optional rows", {
   expect_identical(ctrl$computed_style()$height$value, 5L)
 })
 
-test_that("numericInput validates numbers within range", {
+test_that("numericInput holds a number and validates it within range", {
   w <- numericInput("n", value = 5, min = 1, max = 10)
+  expect_true(inherits(w, "NumericInput"))
   expect_true(inherits(w, "Input"))
-  expect_identical(w$value, "5")
+  expect_identical(w$value, 5)
+  expect_identical(w$text, "5")
   expect_true(w$valid)
   w$value <- "abc"
+  expect_identical(w$value, NA_real_)
   expect_false(w$valid)
   w$value <- "11"
   expect_false(w$valid)
-  w$value <- "7"
+  expect_identical(w$value, NA_real_)
+  w$value <- 7
+  expect_identical(w$value, 7)
   expect_true(w$valid)
+  w$value <- NA
+  expect_identical(w$text, "")
+  expect_true(w$valid)
+  expect_error(numericInput("n", min = "a"), "min")
+  expect_error(numericInput("n", value = "5"), "number")
 })
 
 test_that("checkboxInput and actionButton map ids and labels", {
@@ -369,7 +379,7 @@ test_that("update*Input functions change controls and their labels", {
   updateTextAreaInput(a, "notes", value = "x\ny")
   expect_identical(a$query_one("#notes")$value, "x\ny")
   updateNumericInput(a, "n", value = 7)
-  expect_identical(a$query_one("#n")$value, "7")
+  expect_identical(a$query_one("#n")$value, 7)
   updateCheckboxInput(a, "logs", value = TRUE, label = "Verbose")
   expect_true(a$query_one("#logs")$value)
   expect_identical(a$query_one("#logs")$label, "Verbose")
@@ -407,13 +417,222 @@ test_that("constructors accept list choices, inline radios, NULL numeric values 
   expect_identical(r$value, "a")
   n <- numericInput("n", "N")
   ctrl <- n$query_one("#n")
-  expect_identical(ctrl$value, "")
+  expect_identical(ctrl$value, NA_real_)
   expect_true(ctrl$valid)
-  expect_error(numericInput("n", value = "x"), "number")
+  expect_true(inherits(verbatimTextOutput("v")$query_one("#v"), "Label"))
+  expect_true(inherits(tableOutput("t"), "DataTable"))
   expect_error(selectInput("fmt", NULL, character()), "choices")
   p <- passwordInput("pw", "Password")
   expect_true(p$query_one("#pw")$password)
   expect_true(inherits(textOutput("out"), "Label"))
   expect_identical(textOutput("out")$id, "out")
   expect_error(textInput(1), "inputId")
+})
+
+# Phase 2: widget fields in the signal graph ----------------------------------
+
+test_that("a widget function that reads another widget's field updates when it changes", {
+  name <- input(id = "name")
+  a <- app(name, label(function() paste("Hello,", name$value), id = "out"))
+  pilot <- test_app(a, 30, 6)
+  pilot$type("Ada")
+  expect_identical(pilot$query_one("#out")$text, "Hello, Ada")
+  expect_match(paste(pilot$screen_text(), collapse = "\n"), "Hello, Ada", fixed = TRUE)
+  pilot$stop()
+})
+
+test_that("bound functions track checkbox and radio set values across widgets", {
+  cb <- checkboxInput("logs", "Logs")
+  rs <- radioButtons("mode", NULL, c("a", "b"))
+  a <- app(cb, rs, label(function() paste(cb$value, rs$value), id = "out"))
+  pilot <- test_app(a, 30, 8)
+  expect_identical(pilot$query_one("#out")$text, "FALSE a")
+  pilot$focus(cb)
+  pilot$press("space")
+  expect_identical(pilot$query_one("#out")$text, "TRUE a")
+  pilot$focus(rs$children[[2]])
+  pilot$press("space")
+  expect_identical(pilot$query_one("#out")$text, "TRUE b")
+  pilot$stop()
+})
+
+test_that("reads outside a reactive context are not tracked and set_state does not self-subscribe", {
+  name <- input(id = "name", value = "a")
+  runs <- 0L
+  lbl <- label(function() { runs <<- runs + 1L; toupper(name$value) })
+  expect_identical(runs, 1L)
+  expect_identical(name$value, "a")      # plain read: no dependency created
+  name$value <- "b"                      # one change, one re-run (not one per state field)
+  expect_identical(runs, 2L)
+  expect_identical(lbl$text, "B")
+  lbl$text <- "manual"                   # writing the bound field does not re-run the binding
+  expect_identical(runs, 2L)
+})
+
+test_that("renderText keeps an output in sync with input and signals", {
+  suffix <- reactiveVal("!")
+  ui <- vertical(textInput("name", "Name"), textOutput("greeting"))
+  server <- function(input, output, session) {
+    output$greeting <- renderText({ paste0("Hello, ", input$name, suffix()) })
+  }
+  pilot <- test_app(app(ui, server = server), 30, 8)
+  expect_identical(pilot$query_one("#greeting")$text, "Hello, !")
+  pilot$focus("#name")
+  pilot$type("Ada")
+  expect_identical(pilot$query_one("#greeting")$text, "Hello, Ada!")
+  suffix("?")
+  pilot$step()
+  expect_identical(pilot$query_one("#greeting")$text, "Hello, Ada?")
+  expect_match(paste(pilot$screen_text(), collapse = "\n"), "Hello, Ada?", fixed = TRUE)
+  pilot$stop()
+  suffix("#")                            # the render was disposed with the app
+  expect_identical(pilot$query_one("#greeting")$text, "Hello, Ada?")
+})
+
+test_that("render functions accept functions, format like cat(), and plain writes stay one-shot", {
+  a <- app(textInput("name", value = "x"), textOutput("a"), textOutput("b"), textOutput("c"))
+  output <- shiny_output(a)
+  input <- shiny_input(a)
+  output$a <- renderText(function() c("n:", nchar(input$name)))
+  output$b <- renderText({ NULL })
+  output$c <- "once"
+  expect_identical(a$query_one("#a")$text, "n: 1")
+  expect_identical(a$query_one("#b")$text, "")
+  a$query_one("#name")$set(value = "xyz")
+  expect_identical(a$query_one("#a")$text, "n: 3")
+  expect_identical(a$query_one("#c")$text, "once")
+  expect_output(print(renderText({ 1 })), "render")
+})
+
+test_that("render bindings made by the server are replaced on rerun, not duplicated", {
+  runs <- 0L
+  a <- app(textInput("name"), textOutput("out"), server = function(input, output, session) {
+    output$out <- renderText({ runs <<- runs + 1L; input$name })
+  })
+  for (i in 1:2) {
+    pilot <- test_app(a, 20, 5)
+    pilot$stop()
+  }
+  expect_identical(runs, 2L)
+  pilot <- test_app(a, 20, 5)
+  pilot$focus("#name")
+  before <- runs
+  pilot$type("x")
+  expect_identical(runs, before + 1L)
+  pilot$stop()
+})
+
+test_that("renderPrint and renderTable fill verbatim and table outputs", {
+  ui <- vertical(selectInput("n", NULL, c("2", "3")), verbatimTextOutput("summary"), tableOutput("tbl"))
+  server <- function(input, output, session) {
+    output$tbl <- renderTable({ head(mtcars, as.integer(input$n)) })
+    output$summary <- renderPrint({ nrow(head(mtcars, as.integer(input$n))) })
+  }
+  pilot <- test_app(app(ui, server = server), 60, 20)
+  expect_identical(nrow(pilot$query_one("#tbl")$data), 2L)
+  expect_identical(pilot$query_one("#summary")$text, "[1] 2")
+  updateSelectInput(pilot$app, "n", selected = "3")
+  pilot$step()
+  expect_identical(nrow(pilot$query_one("#tbl")$data), 3L)
+  expect_identical(pilot$query_one("#summary")$text, "[1] 3")
+  expect_match(paste(pilot$screen_text(), collapse = "\n"), "[1] 3", fixed = TRUE)
+  pilot$stop()
+  out <- shiny_output(app(tableOutput("t")))
+  expect_error(out$t <- renderTable({ 42 }), "data frame")
+})
+
+# Phase 2: Shiny reactive aliases ---------------------------------------------
+
+test_that("reactiveVal, reactive, observe and isolate map onto the signal graph", {
+  items <- reactiveVal(c(1, 2))
+  total <- reactive({ sum(items()) })
+  expect_s3_class(items, "termr_signal")
+  expect_s3_class(total, "termr_computed")
+  seen <- c()
+  w <- observe({ seen <<- c(seen, total()) })
+  expect_s3_class(w, "termr_watch")
+  expect_identical(seen, 3)
+  items(c(1, 2, 3))
+  expect_identical(seen, c(3, 6))
+  expect_identical(isolate(total()), 6)
+  other <- reactiveVal(0)
+  runs <- 0L
+  observe({ runs <<- runs + 1L; isolate(other()) })
+  other(1)
+  expect_identical(runs, 1L)
+  dispose(w)
+  items(0)
+  expect_identical(seen, c(3, 6))
+  double <- reactive(function() items() * 2)
+  expect_identical(double(), 0)
+  f <- function() total()
+  g <- reactive(f)
+  expect_identical(g(), 0)
+})
+
+test_that("reactive() and observe() see input inside a server and are disposed with the app", {
+  n <- 0L
+  a <- app(textInput("name", value = "A"), textOutput("len"), server = function(input, output, session) {
+    chars <- reactive({ nchar(input$name) })
+    observe({ n <<- n + 1L; output$len <- paste("len", chars()) })
+  })
+  pilot <- test_app(a, 20, 5)
+  expect_identical(pilot$query_one("#len")$text, "len 1")
+  pilot$focus("#name")
+  pilot$type("bc")
+  expect_identical(pilot$query_one("#len")$text, "len 3")
+  pilot$stop()
+  before <- n
+  pilot$query_one("#name")$set(value = "zzzz")
+  expect_identical(n, before)
+})
+
+test_that("reactive(value) still declares a state field, with a one-time deprecation warning", {
+  termr_env$deprecated$reactive_state <- NULL
+  expect_warning(f <- reactive(0L), "state\\(")
+  expect_s3_class(f, "termr_reactive")
+  expect_silent(reactive(1L))
+  expect_match(format(state(2L)), "^<state")
+  Dep <- widget("Dep", state = list(count = state(1L), label = "x"),
+                render = function(self) paste(self$label, self$count))
+  expect_identical(Dep()$count, 1L)
+  expect_identical(Dep(count = 3L, label = "y")$render(), "y 3")
+})
+
+test_that("invalidateLater re-runs a render on the app timer and stops with the app", {
+  ticks <- 0L
+  server <- function(input, output, session) {
+    output$clock <- renderText({
+      invalidateLater(1000)
+      ticks <<- ticks + 1L
+      paste("tick", ticks)
+    })
+  }
+  pilot <- test_app(app(textOutput("clock"), server = server), 20, 1)
+  expect_identical(ticks, 1L)
+  pilot$advance(1)
+  expect_identical(ticks, 2L)
+  pilot$advance(2.5)
+  expect_identical(ticks, 4L)
+  expect_match(pilot$screen_text(), "tick 4")
+  pilot$stop()
+  timers <- pilot$app$.__enclos_env__$private$.timers$timers
+  expect_false(any(vapply(timers, function(t) t$active, logical(1))))
+  expect_error(invalidateLater(10), "inside")
+  expect_error(observe({ invalidateLater(-1) }), "millis")
+})
+
+test_that("invalidateLater inside reactive() re-evaluates it and its dependents", {
+  runs <- 0L
+  a <- app(textOutput("x"), server = function(input, output, session) {
+    stamp <- reactive({ invalidateLater(500); runs <<- runs + 1L; runs })
+    output$x <- renderText({ paste("run", stamp()) })
+  })
+  pilot <- test_app(a, 20, 1)
+  expect_identical(pilot$query_one("#x")$text, "run 1")
+  pilot$advance(0.5)
+  expect_identical(pilot$query_one("#x")$text, "run 2")
+  pilot$advance(1)
+  expect_identical(pilot$query_one("#x")$text, "run 4")
+  pilot$stop()
 })

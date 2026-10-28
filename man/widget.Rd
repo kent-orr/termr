@@ -22,7 +22,7 @@ widget(
 \item{name}{Type name (used by type selectors, e.g. \code{app$query("Counter")}).}
 
 \item{state}{A named list of state fields. Values created with
-\code{\link[=reactive]{reactive()}} can have a watcher; plain values are reactive too.
+\code{\link[=state]{state()}} can have a watcher; plain values are reactive too.
 Fields are read and assigned as \verb{self$<name>}.}
 
 \item{render}{\verb{function(self)} returning the content: a string, a
@@ -61,7 +61,7 @@ first argument, \code{self}.
 \examples{
 Counter <- widget(
   "Counter",
-  state = list(count = reactive(0L)),
+  state = list(count = state(0L)),
   render = function(self) sprintf("Count: \%d", self$count),
   bindings = list(bind("up", "increment"), bind("down", "decrement")),
   actions = list(

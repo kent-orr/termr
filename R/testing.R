@@ -39,9 +39,11 @@ visible_area <- function(widget) {
 
 # Layout + paint a screen into a fresh buffer.
 compose_frame <- function(screen, width, height) {
-  layout_tree(screen, rect(1L, 1L, width, height))
-  buffer <- ScreenBuffer$new(width, height)
-  paint_tree(screen, buffer)
+  batch({
+    layout_tree(screen, rect(1L, 1L, width, height))
+    buffer <- ScreenBuffer$new(width, height)
+    paint_tree(screen, buffer)
+  })
   buffer
 }
 

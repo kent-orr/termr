@@ -21,11 +21,15 @@ current_registration_target <- function() {
 #'
 #' `shiny_input()` and `shiny_output()` wrap an [App] in the `input` and
 #' `output` objects a Shiny server function receives. `input$name` reads
-#' the `value` of the widget with id `name`; `output$name <- x` writes the
-#' widget's natural field: `text` for labels, `value` for progress bars,
-#' metrics and controls, `data` for tables, sparklines and key-value views,
-#' `label` for buttons. `names()` lists the ids in the app. An id that does
-#' not match a widget is an error.
+#' the `value` of the widget with id `name`; inside a reactive context
+#' (`reactive()`, `observe()`, a render function or a widget bound to a
+#' function) the read is a dependency, so the context re-runs when the user
+#' changes the widget. `output$name <- x` writes the widget's natural field:
+#' `text` for labels, `value` for progress bars, metrics and controls,
+#' `data` for tables, sparklines and key-value views, `label` for buttons.
+#' `output$name <- renderText({ ... })` keeps the field in sync with an
+#' expression instead; see [renderText()]. `names()` lists the ids in the
+#' app. An id that does not match a widget is an error.
 #'
 #' A server function passed to [app()] receives both objects; these
 #' constructors are for use outside one, for example in tests.
@@ -99,7 +103,11 @@ shiny_read <- function(x, name) {
 shiny_write <- function(x, name, value) {
   widget <- shiny_widget(x, name)
   field <- shiny_output_field(widget)
-  widget[[field]] <- value
+  if (inherits(value, "termr_render")) {
+    bind_render(widget, field, value)
+  } else {
+    widget[[field]] <- value
+  }
   invisible(x)
 }
 

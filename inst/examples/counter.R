@@ -11,7 +11,7 @@ library(termr)
 Counter <- widget(
   "Counter",
   state = list(
-    count = reactive(0L, watch = function(self, value, old) {
+    count = state(0L, watch = function(self, value, old) {
       self$post_message("counter.changed", list(value = value, delta = value - old))
     })
   ),

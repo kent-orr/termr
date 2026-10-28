@@ -70,8 +70,12 @@ cause one run. Event handlers of an app run in a batch automatically.
 call \code{dispose()} (or remove the widget) when they are no longer needed.
 }
 
-This graph is independent of the widget-level \code{\link[=reactive]{reactive()}} fields. It is
-\strong{experimental}.
+Widget fields are part of the graph: reading a widget field such as
+\code{name$value} or \code{input$name} inside a computed or watch records a
+dependency, and changing the field (by the user or with \verb{$set()}) re-runs
+it at the end of the current event-loop tick. One node per widget: any
+field change of a widget re-runs every context that read any of its
+fields. The graph is \strong{experimental}.
 }
 \examples{
 count <- signal(1)

@@ -29,6 +29,7 @@ rx$flushing <- FALSE
 rx$next_id <- 0L
 rx$max_runs <- 10000L
 rx$stack <- list()
+rx$isolated <- NULL      # the node whose function is running inside untracked()
 
 new_node <- function(kind, fn = NULL, value = NULL, name = NULL) {
   rx$next_id <- rx$next_id + 1L
@@ -50,6 +51,8 @@ new_node <- function(kind, fn = NULL, value = NULL, name = NULL) {
   node$runs <- 0L
   node$invalidations <- 0L
   node$writes <- 0L
+  node$force <- FALSE      # re-run on the next flush even if no dependency changed
+  node$timer <- NULL       # pending invalidateLater() timer
   node
 }
 
@@ -117,6 +120,10 @@ refresh_computed <- function(node) {
 # Has any dependency of an effect really changed since it last ran?
 effect_is_stale <- function(node) {
   if (node$version == 0L) return(TRUE)
+  if (node$force) {
+    node$force <- FALSE
+    return(TRUE)
+  }
   for (dep in node$deps) {
     if (dep$kind == "computed") refresh_computed(dep)
     if (!identical(node$seen[[as.character(dep$id)]], dep$version)) return(TRUE)
@@ -182,8 +189,12 @@ flush_effects <- function() {
 #' * Watchers and bound widgets keep their signals' subscriber lists alive;
 #'   call `dispose()` (or remove the widget) when they are no longer needed.
 #'
-#' This graph is independent of the widget-level [reactive()] fields. It is
-#' **experimental**.
+#' Widget fields are part of the graph: reading a widget field such as
+#' `name$value` or `input$name` inside a computed or watch records a
+#' dependency, and changing the field (by the user or with `$set()`) re-runs
+#' it at the end of the current event-loop tick. One node per widget: any
+#' field change of a widget re-runs every context that read any of its
+#' fields. The graph is **experimental**.
 #'
 #' @param value Initial value of a signal.
 #' @param fn A function of no arguments.
@@ -265,6 +276,10 @@ watch <- function(fn, name = NULL) {
 
 dispose_node <- function(node) {
   node$disposed <- TRUE
+  if (!is.null(node$timer)) {
+    node$timer$cancel()
+    node$timer <- NULL
+  }
   unlink_deps(node)
   rx$pending[[as.character(node$id)]] <- NULL
   for (sub in node$subs) sub$deps[[as.character(node$id)]] <- NULL
@@ -316,8 +331,13 @@ peek <- function(x) {
 #' @export
 untracked <- function(expr) {
   old <- rx$observer
+  old_isolated <- rx$isolated
   rx$observer <- NULL
-  on.exit(rx$observer <- old)
+  rx$isolated <- old %||% old_isolated
+  on.exit({
+    rx$observer <- old
+    rx$isolated <- old_isolated
+  })
   expr
 }
 

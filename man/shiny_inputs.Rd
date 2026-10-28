@@ -11,6 +11,8 @@
 \alias{selectInput}
 \alias{actionButton}
 \alias{textOutput}
+\alias{verbatimTextOutput}
+\alias{tableOutput}
 \title{Shiny-style input controls}
 \usage{
 textInput(inputId, label = NULL, value = "", placeholder = "", ...)
@@ -44,6 +46,10 @@ selectInput(inputId, label = NULL, choices, selected = NULL, ...)
 actionButton(inputId, label = "Button", ...)
 
 textOutput(outputId, ...)
+
+verbatimTextOutput(outputId, ...)
+
+tableOutput(outputId, ...)
 }
 \arguments{
 \item{inputId, outputId}{The widget id.}
@@ -88,12 +94,14 @@ is returned as is.
    \code{textInput()} \tab \code{\link[=input]{input()}} \cr
    \code{passwordInput()} \tab \code{input(password = TRUE)} \cr
    \code{textAreaInput()} \tab \code{\link[=text_area]{text_area()}} \cr
-   \code{numericInput()} \tab \code{input(validate = )}; \verb{$value} is text \cr
+   \code{numericInput()} \tab \link{NumericInput}; \verb{$value} is numeric, \code{NA} when invalid \cr
    \code{checkboxInput()} \tab \code{\link[=checkbox]{checkbox()}} \cr
    \code{radioButtons()} \tab \code{\link[=radio_set]{radio_set()}} \cr
    \code{selectInput()} \tab \code{\link[=dropdown]{dropdown()}} \cr
    \code{actionButton()} \tab \code{\link[=button]{button()}} \cr
    \code{textOutput()} \tab \code{label(id = )} \cr
+   \code{verbatimTextOutput()} \tab \code{label(id = )} inside a \code{\link[=panel]{panel()}} \cr
+   \code{tableOutput()} \tab \code{data_table(id = )} \cr
 }
 }
 \examples{

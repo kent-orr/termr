@@ -39,14 +39,16 @@ capture_handler <- function(expr, env) {
   list(expr = expr, env = env)
 }
 
-run_handler <- function(handler, app, event = NULL, value = NULL) {
+# Run a captured handler. `...` are extra named bindings (`event = ` for
+# widget handlers, `value = ` for signal handlers); a function handler gets
+# them positionally, then `app`.
+run_handler <- function(handler, app, ...) {
+  extra <- list(...)
   if (!is.null(handler$fn)) {
-    first <- if (is.null(event)) value else event
-    return(call_flex(handler$fn, first, app))
+    return(do.call(call_flex, c(list(handler$fn), unname(extra), list(app))))
   }
   e <- new.env(parent = handler$env)
-  e$event <- event
-  e$value <- value
+  for (n in names(extra)) assign(n, extra[[n]], envir = e)
   e$app <- app
   if (!is.null(app)) {
     e$input <- shiny_input(app)

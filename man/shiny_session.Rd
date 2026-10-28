@@ -19,11 +19,15 @@ An object of class \code{termr_input} or \code{termr_output}.
 \description{
 \code{shiny_input()} and \code{shiny_output()} wrap an \link{App} in the \code{input} and
 \code{output} objects a Shiny server function receives. \code{input$name} reads
-the \code{value} of the widget with id \code{name}; \code{output$name <- x} writes the
-widget's natural field: \code{text} for labels, \code{value} for progress bars,
-metrics and controls, \code{data} for tables, sparklines and key-value views,
-\code{label} for buttons. \code{names()} lists the ids in the app. An id that does
-not match a widget is an error.
+the \code{value} of the widget with id \code{name}; inside a reactive context
+(\code{reactive()}, \code{observe()}, a render function or a widget bound to a
+function) the read is a dependency, so the context re-runs when the user
+changes the widget. \code{output$name <- x} writes the widget's natural field:
+\code{text} for labels, \code{value} for progress bars, metrics and controls,
+\code{data} for tables, sparklines and key-value views, \code{label} for buttons.
+\code{output$name <- renderText({ ... })} keeps the field in sync with an
+expression instead; see \code{\link[=renderText]{renderText()}}. \code{names()} lists the ids in the
+app. An id that does not match a widget is an error.
 }
 \details{
 A server function passed to \code{\link[=app]{app()}} receives both objects; these

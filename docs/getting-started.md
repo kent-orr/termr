@@ -46,7 +46,7 @@ app(
 | Look         | `style()`, `stylesheet()`, `termr_theme()`                      |
 | Events       | `on()`, `widget$on()`, `widget$post_message()`                 |
 | Keys         | `bind()`, actions, the command palette (Ctrl+P)                |
-| State        | `widget()`, `reactive()`, `widget$set()`                        |
+| State        | `widget()`, `state()`, `widget$set()`                           |
 | Time         | `set_timeout()`, `set_interval()`, `animate()`                 |
 | Long work    | `app$run_worker()`                                              |
 | Screens      | `app$push_screen()`, `modal()`, `confirm_dialog()`, `app$notify()` |

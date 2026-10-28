@@ -15,7 +15,7 @@ can subscribe with `on()`:
 ```r
 Counter <- termr::widget(
   "Counter",
-  state = list(count = termr::reactive(0L)),
+  state = list(count = termr::state(0L)),
   render = function(self) sprintf("Count: %d", self$count),
   bindings = list(termr::bind("up", "increment", "Increment")),
   actions = list(increment = function(self) {

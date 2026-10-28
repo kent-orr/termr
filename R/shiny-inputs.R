@@ -30,12 +30,14 @@ shiny_choices <- function(choices) {
 #' | `textInput()` | [input()] |
 #' | `passwordInput()` | `input(password = TRUE)` |
 #' | `textAreaInput()` | [text_area()] |
-#' | `numericInput()` | `input(validate = )`; `$value` is text |
+#' | `numericInput()` | [NumericInput]; `$value` is numeric, `NA` when invalid |
 #' | `checkboxInput()` | [checkbox()] |
 #' | `radioButtons()` | [radio_set()] |
 #' | `selectInput()` | [dropdown()] |
 #' | `actionButton()` | [button()] |
 #' | `textOutput()` | `label(id = )` |
+#' | `verbatimTextOutput()` | `label(id = )` inside a [panel()] |
+#' | `tableOutput()` | `data_table(id = )` |
 #'
 #' @param inputId,outputId The widget id.
 #' @param label Label shown above the control (`NULL` for none). For
@@ -99,19 +101,83 @@ textAreaInput <- function(inputId, label = NULL, value = "", placeholder = "", r
 #' @export
 numericInput <- function(inputId, label = NULL, value = NULL, min = NA, max = NA, ...) {
   check_scalar_character(inputId, "inputId")
-  if (!is.null(value) && !(is.numeric(value) && length(value) == 1L)) {
-    stop("`value` must be a single number or NULL.", call. = FALSE)
+  with_shiny_label(label, NumericInput$new(value = value, min = min, max = max, id = inputId, ...))
+}
+
+#' @title NumericInput widget
+#' @description A text [Input] that holds a number: `$value` is numeric
+#'   (`NA` while the text is empty or not a valid number in range) and
+#'   `$text` is the raw text. Created by [numericInput()]. The
+#'   `"input.changed"` message carries the text, as for any input.
+#' @rdname NumericInput-class
+#' @export
+NumericInput <- R6::R6Class(
+  "NumericInput",
+  inherit = Input,
+  public = list(
+    #' @field min,max Bounds checked by the built-in validator (`NA`: none).
+    min = NA_real_,
+    max = NA_real_,
+
+    #' @description Create a numeric input.
+    #' @param value Initial number (`NULL` or `NA` for empty).
+    #' @param min,max Bounds, or `NA`.
+    #' @param placeholder Placeholder text.
+    #' @param id,classes,style,disabled See [Widget].
+    initialize = function(value = NULL, min = NA, max = NA, placeholder = "", id = NULL, classes = NULL,
+                          style = NULL, disabled = FALSE) {
+      check_number_or_na(min, "min")
+      check_number_or_na(max, "max")
+      if (!is.null(value) && !(is.numeric(value) && length(value) == 1L)) {
+        stop("`value` must be a single number or NULL.", call. = FALSE)
+      }
+      self$min <- as.numeric(min)
+      self$max <- as.numeric(max)
+      self_ref <- self
+      super$initialize(numeric_text(value), placeholder = placeholder, id = id, classes = classes,
+                       style = style, disabled = disabled,
+                       validate = function(x) check_numeric_text(x, self_ref$min, self_ref$max))
+    }
+  ),
+  active = list(
+    #' @field value The number, or `NA` (reactive). Assign a number or text.
+    value = function(value) {
+      if (missing(value)) {
+        if (!is.null(private$.state$error)) return(NA_real_)
+        text <- trimws(private$.state$value)
+        return(if (nzchar(text)) as.numeric(text) else NA_real_)
+      }
+      text <- if (is.numeric(value) || (is.logical(value) && length(value) == 1L && is.na(value))) {
+        numeric_text(value)
+      } else {
+        clean_input_value(value, self$max_length)
+      }
+      chars <- input_chars(text)
+      private$edit(chars, length(chars))
+    },
+    #' @field text The raw text (read-only; assign `value`).
+    text = function(value) if (missing(value)) private$.state$value else read_only("text")
+  )
+)
+
+check_number_or_na <- function(x, arg) {
+  if (!(length(x) == 1L && (is.na(x) || is.numeric(x)))) {
+    stop(sprintf("`%s` must be a single number or NA.", arg), call. = FALSE)
   }
-  text <- if (is.null(value) || is.na(value)) "" else format(value)
-  validate <- function(x) {
-    if (!nzchar(trimws(x))) return(NULL)
-    n <- suppressWarnings(as.numeric(x))
-    if (is.na(n)) return("Enter a number")
-    if (!is.na(min) && n < min) return(paste("Must be at least", format(min)))
-    if (!is.na(max) && n > max) return(paste("Must be at most", format(max)))
-    NULL
-  }
-  with_shiny_label(label, input(value = text, id = inputId, validate = validate, ...))
+  invisible(x)
+}
+
+numeric_text <- function(value) {
+  if (is.null(value) || length(value) == 0L || is.na(value)) "" else format(value, scientific = FALSE, trim = TRUE)
+}
+
+check_numeric_text <- function(x, min, max) {
+  if (!nzchar(trimws(x))) return(NULL)
+  n <- suppressWarnings(as.numeric(x))
+  if (is.na(n)) return("Enter a number")
+  if (!is.na(min) && n < min) return(paste("Must be at least", format(min)))
+  if (!is.na(max) && n > max) return(paste("Must be at most", format(max)))
+  NULL
 }
 
 #' @rdname shiny_inputs
@@ -156,6 +222,20 @@ actionButton <- function(inputId, label = "Button", ...) {
 textOutput <- function(outputId, ...) {
   check_scalar_character(outputId, "outputId")
   label("", id = outputId, ...)
+}
+
+#' @rdname shiny_inputs
+#' @export
+verbatimTextOutput <- function(outputId, ...) {
+  check_scalar_character(outputId, "outputId")
+  panel(label("", id = outputId), style = style(height = "auto"), ...)
+}
+
+#' @rdname shiny_inputs
+#' @export
+tableOutput <- function(outputId, ...) {
+  check_scalar_character(outputId, "outputId")
+  data_table(data.frame(), id = outputId, ...)
 }
 
 # update*Input() -------------------------------------------------------------
@@ -251,9 +331,9 @@ updateTextAreaInput <- function(session, inputId, label = NULL, value = NULL, pl
 #' @rdname shiny_update
 #' @export
 updateNumericInput <- function(session, inputId, label = NULL, value = NULL) {
-  w <- shiny_update_target(session, inputId, "Input")
+  w <- shiny_update_target(session, inputId, "NumericInput")
   update_shiny_label(w, label)
-  if (!is.null(value)) w$value <- if (is.na(value)) "" else format(value)
+  if (!is.null(value)) w$value <- value
   invisible(w)
 }
 

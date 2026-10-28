@@ -1,3 +1,36 @@
+# termr 1.0.3
+
+## Shiny-shaped layer, phase 2: one reactive graph
+
+Widget state is now part of the signal graph, so the obvious code works:
+
+```r
+name <- input(id = "name")
+app(name, label(function() paste("Hello,", name$value))) |> run()
+```
+
+* Reading a widget field (`name$value`, `input$name`, `tbl$data`) inside a
+  `watch()`, `computed()`, bound widget function or render function records
+  a dependency; changing the field re-runs the context at the end of the
+  tick. Granularity is one node per widget. Before, such reads were silently
+  stale.
+* Painting runs inside a `batch()`, so effects never run in the middle of a
+  frame; effects that change state after a frame trigger the next repaint.
+* `output$id <- renderText({ ... })`, `renderPrint()` and `renderTable()`
+  keep an output widget in sync with an expression; `verbatimTextOutput()`
+  and `tableOutput()` join `textOutput()`. Renders made by a server are
+  replaced on rerun and disposed with the app. `bind_reactive()` now
+  replaces an earlier binding of the same field instead of adding to it.
+* Shiny aliases: `reactiveVal()`, `reactive({ })`, `observe({ })`,
+  `isolate({ })` and a faithful `invalidateLater(millis)`, which re-runs the
+  enclosing reactive on an app timer.
+* `state()` replaces `reactive()` as the declarator of custom-widget state
+  fields. `reactive(value, watch)` still works and warns once per session;
+  `reactive({ expr })` now creates a derived value as in Shiny.
+* `numericInput()` returns a `NumericInput`, a subclass of `Input` whose
+  `$value` is numeric (`NA` while empty or invalid) and `$text` is the raw
+  text. `updateNumericInput()` takes a number.
+
 # termr 1.0.2
 
 ## Shiny-shaped layer, phase 1

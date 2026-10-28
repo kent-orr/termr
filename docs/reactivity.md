@@ -4,7 +4,7 @@ termr has two reactive layers that work together.
 
 ## Widget fields
 
-A custom widget declares `reactive()` fields; assigning one repaints the
+A custom widget declares `state()` fields; assigning one repaints the
 widget (see [custom-widgets.md](custom-widgets.md)). Built-in widgets expose
 reactive fields too (`label$text`, `progress_bar$value`, ...).
 

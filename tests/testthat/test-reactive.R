@@ -1,6 +1,6 @@
 Counter <- widget(
   "Counter",
-  state = list(count = reactive(0L)),
+  state = list(count = state(0L)),
   render = function(self) sprintf("Count: %d", self$count),
   bindings = list(bind("up", "increment"), bind("down", "decrement"), bind("b", "bulk")),
   actions = list(
@@ -72,7 +72,7 @@ test_that("watchers run after changes and can post messages", {
   seen <- list()
   Temp <- widget(
     "Temp",
-    state = list(celsius = reactive(20, watch = function(self, value, old) {
+    state = list(celsius = state(20, watch = function(self, value, old) {
       self$post_message("temp.changed", list(value = value, old = old))
     })),
     render = function(self) paste0(self$celsius, "C")

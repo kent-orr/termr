@@ -45,9 +45,14 @@ App <- R6::R6Class(
     #'   to follow `options(termr.reduce_motion)` / the `TERMR_REDUCE_MOTION`
     #'   environment variable.
     #' @param debug Bind F12 to the debug overlay?
+    #' @param server Optional `function(input, output, session)` run once
+    #'   per `run()` after the widgets are mounted; see [app()].
     initialize = function(..., bindings = list(), actions = list(), title = NULL, mouse = TRUE,
-                          stylesheet = NULL, theme = "default", debug = FALSE, reduce_motion = NULL) {
+                          stylesheet = NULL, theme = "default", debug = FALSE, reduce_motion = NULL,
+                          server = NULL) {
       check_flag(debug)
+      check_function(server, "server", allow_null = TRUE)
+      private$.server <- server
       if (!is.null(reduce_motion)) check_flag(reduce_motion)
       self$reduce_motion <- reduce_motion
       check_flag(mouse)
@@ -136,6 +141,15 @@ App <- R6::R6Class(
     on = function(type, selector = NULL, handler) {
       h <- if (is_handler(type)) type else on(type, selector, handler)
       private$.handlers[[length(private$.handlers) + 1L]] <- h
+      invisible(self)
+    },
+
+    #' @description Remove an event handler added with `on()` (the same
+    #'   `termr_handler` object). Unknown handlers are ignored.
+    #' @param handler A `termr_handler`.
+    off = function(handler) {
+      if (!is_handler(handler)) stop("`handler` must be a handler created with on().", call. = FALSE)
+      private$.handlers <- Filter(function(h) !identical(h, handler), private$.handlers)
       invisible(self)
     },
 
@@ -551,6 +565,8 @@ App <- R6::R6Class(
     .driver = NULL,
     .renderer = NULL,
     .handlers = list(),
+    .server = NULL,
+    .server_items = list(),
     .bindings = list(),
     .actions = list(),
     .later = list(),
@@ -603,11 +619,13 @@ App <- R6::R6Class(
           self$on(item)
         } else if (is_binding(item)) {
           self$bind(item)
+        } else if (inherits(item, "termr_watch")) {
+          if (is.function(item$bind_app)) item$bind_app(self)
         } else if (is.list(item) && !is.object(item)) {
           private$add_items(item)
         } else {
           stop(sprintf(
-            "app() accepts widgets, on() handlers and bind() bindings, not %s.",
+            "app() accepts widgets, on() handlers, bind() bindings and observeEvent() watchers, not %s.",
             class(item)[[1]]
           ), call. = FALSE)
         }
@@ -655,7 +673,39 @@ App <- R6::R6Class(
       private$ensure_focus(initial = TRUE)
       private$.needs_repaint <- TRUE
       private$process_queue()
+      private$run_server()
       private$refresh_screen()
+    },
+
+    # Run the server function (see app()) with this app as the registration
+    # target, so observeEvent() and friends register on it directly.
+    run_server = function() {
+      if (is.null(private$.server)) return(invisible())
+      self_ref <- self
+      target <- list(
+        app = self,
+        add = function(x) {
+          private$.server_items[[length(private$.server_items) + 1L]] <- x
+          if (is_handler(x)) {
+            self_ref$on(x)
+          } else if (inherits(x, "termr_watch")) {
+            if (is.function(x$bind_app)) x$bind_app(self_ref)
+          }
+          invisible(x)
+        }
+      )
+      with_registration_target(target, {
+        batch(call_flex(private$.server, shiny_input(self), shiny_output(self), self))
+      })
+      invisible()
+    },
+
+    # Undo what the server registered, so the app can run again cleanly.
+    remove_server_items = function() {
+      for (x in private$.server_items) {
+        if (is_handler(x)) self$off(x) else if (inherits(x, "termr_watch")) x$dispose()
+      }
+      private$.server_items <- list()
     },
 
     shutdown = function() {
@@ -676,6 +726,7 @@ App <- R6::R6Class(
         }
       }
       private$.running <- FALSE
+      attempt("remove server handlers", private$remove_server_items)
       termr_env$apps <- Filter(function(a) !identical(a, self), termr_env$apps)
       private$.driver <- NULL
       private$.renderer <- NULL
@@ -1185,9 +1236,38 @@ default_app_bindings <- function() {
 #'   `"dark"`, `"light"`).
 #' @param debug Bind F12 to a debug overlay (focused and hovered widget,
 #'   last event, repaint statistics)?
+#' @param server Optional server function, `function(input, output, session)`,
+#'   as in Shiny. It is called once each time the app is run, after the
+#'   widgets are mounted and before the first frame, with the [shiny_input()]
+#'   accessor, the [shiny_output()] accessor and the `App` itself (name the
+#'   third argument `session` or `app` as you prefer). While it runs,
+#'   [observeEvent()] registers handlers on the app directly; they are
+#'   removed when the app stops.
 #' @return An [App]. Start it with [run()].
 #'
 #' Built-in bindings: `tab` / `shift+tab` move focus, `ctrl+c` quits.
+#'
+#' @section UI and server:
+#' An app can be written as a pure widget tree plus a server function, the
+#' way Shiny apps are. The UI holds no handlers; the server declares what
+#' happens:
+#'
+#' ```r
+#' ui <- vertical(
+#'   textInput("name", "Name", placeholder = "Your name"),
+#'   actionButton("go", "Greet"),
+#'   textOutput("out")
+#' )
+#' server <- function(input, output, session) {
+#'   observeEvent(input$go, {
+#'     output$out <- paste("Hello,", input$name)
+#'   })
+#' }
+#' app(ui, server = server)
+#' ```
+#'
+#' The `app(widgets, on(...), bind(...))` style keeps working and the two
+#' can be mixed.
 #' @export
 #' @examples
 #' hello <- app(
@@ -1205,9 +1285,11 @@ default_app_bindings <- function() {
 #' )
 #' if (interactive()) run(hello)
 app <- function(..., bindings = list(), actions = list(), title = NULL, mouse = TRUE,
-                stylesheet = NULL, theme = "default", debug = FALSE, reduce_motion = NULL) {
+                stylesheet = NULL, theme = "default", debug = FALSE, reduce_motion = NULL,
+                server = NULL) {
   App$new(..., bindings = bindings, actions = actions, title = title, mouse = mouse,
-          stylesheet = stylesheet, theme = theme, debug = debug, reduce_motion = reduce_motion)
+          stylesheet = stylesheet, theme = theme, debug = debug, reduce_motion = reduce_motion,
+          server = server)
 }
 
 #' Run an application

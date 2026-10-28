@@ -13,7 +13,8 @@ app(
   stylesheet = NULL,
   theme = "default",
   debug = FALSE,
-  reduce_motion = NULL
+  reduce_motion = NULL,
+  server = NULL
 )
 }
 \arguments{
@@ -40,6 +41,14 @@ last event, repaint statistics)?}
 
 \item{reduce_motion}{Turn decorative animation off? \code{NULL} follows
 \code{\link[=motion_reduced]{motion_reduced()}}.}
+
+\item{server}{Optional server function, \verb{function(input, output, session)},
+as in Shiny. It is called once each time the app is run, after the
+widgets are mounted and before the first frame, with the \code{\link[=shiny_input]{shiny_input()}}
+accessor, the \code{\link[=shiny_output]{shiny_output()}} accessor and the \code{App} itself (name the
+third argument \code{session} or \code{app} as you prefer). While it runs,
+\code{\link[=observeEvent]{observeEvent()}} registers handlers on the app directly; they are
+removed when the app stops.}
 }
 \value{
 An \link{App}. Start it with \code{\link[=run]{run()}}.
@@ -49,6 +58,29 @@ Built-in bindings: \code{tab} / \code{shift+tab} move focus, \code{ctrl+c} quits
 \description{
 Create an application
 }
+\section{UI and server}{
+
+An app can be written as a pure widget tree plus a server function, the
+way Shiny apps are. The UI holds no handlers; the server declares what
+happens:
+
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{ui <- vertical(
+  textInput("name", "Name", placeholder = "Your name"),
+  actionButton("go", "Greet"),
+  textOutput("out")
+)
+server <- function(input, output, session) \{
+  observeEvent(input$go, \{
+    output$out <- paste("Hello,", input$name)
+  \})
+\}
+app(ui, server = server)
+}\if{html}{\out{</div>}}
+
+The \code{app(widgets, on(...), bind(...))} style keeps working and the two
+can be mixed.
+}
+
 \examples{
 hello <- app(
   vertical(

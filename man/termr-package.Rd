@@ -27,8 +27,9 @@ see the repository's API stability guide for the complete classification.
 \seealso{
 Useful links:
 \itemize{
-  \item \url{https://github.com/41929424/termr}
-  \item Report bugs at \url{https://github.com/41929424/termr/issues}
+  \item \url{https://menshikovs.github.io/termr/}
+  \item \url{https://github.com/menshikovs/termr}
+  \item Report bugs at \url{https://github.com/menshikovs/termr/issues}
 }
 
 }

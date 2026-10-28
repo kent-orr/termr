@@ -101,8 +101,11 @@ is_handler <- function(x) inherits(x, "termr_handler")
 
 handler_matches <- function(h, event) {
   if (h$type != "*" && h$type != event$type) return(FALSE)
-  if (is.null(h$selector)) return(TRUE)
+  if (is.null(h$selector) && is.null(h$sender) && is.null(h$filter)) return(TRUE)
   # Key and mouse events have no sender: match the widget they were sent to.
   widget <- event$sender %||% event$target
-  !is.null(widget) && widget$matches(h$selector)
+  if (!is.null(h$selector) && !(!is.null(widget) && widget$matches(h$selector))) return(FALSE)
+  if (!is.null(h$sender) && !identical(widget, h$sender)) return(FALSE)
+  if (!is.null(h$filter) && !isTRUE(h$filter(event, widget))) return(FALSE)
+  TRUE
 }

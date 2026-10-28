@@ -1,3 +1,33 @@
+# termr 1.0.2
+
+## Shiny-shaped layer, phase 1
+
+An additive layer for R users who know Shiny. Nothing in the existing
+snake_case API changes.
+
+* `app(ui, server = function(input, output, session) ...)`: an app can be a
+  pure widget tree plus a server function, as in Shiny. The server runs once
+  per `run()`, after the widgets are mounted and before the first frame, with
+  the `App` as `session`. Handlers it registers are removed when the app
+  stops, so running the same app twice does not double-register them.
+* `input$id` reads the `value` of the widget with that id; `output$id <- x`
+  writes the widget's natural field (`text` for labels, `value` for controls,
+  progress bars and metrics, `data` for tables). `shiny_input()` and
+  `shiny_output()` build the accessors outside a server, for tests.
+* `observeEvent(eventExpr, handlerExpr, ...)`: react to `input$id`, a
+  selector string, a widget object (on its primary message, or `event =`)
+  or a `signal()` (skipping the initial value; `ignoreNULL`, `ignoreInit`,
+  `once`). Handlers can be braced expressions with `event`, `app`, `input`,
+  `output` and `value` bound, or functions. Inside a server the handler is
+  registered immediately; outside one it is listed in `app(...)` like `on()`.
+* Shiny-named constructors `textInput()`, `passwordInput()`,
+  `textAreaInput()`, `numericInput()`, `checkboxInput()`, `radioButtons()`,
+  `selectInput()`, `actionButton()` and `textOutput()`, plus the
+  `updateTextInput()` family. With a label they return a `vertical()` with
+  the label above the control and the id on the control.
+* `App$off()` removes a handler added with `on()`; `app()` accepts the
+  watchers returned by `observeEvent()` on signals.
+
 # termr 1.0.1
 
 First CRAN release, published on [CRAN](https://CRAN.R-project.org/package=termr)

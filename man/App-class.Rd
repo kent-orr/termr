@@ -82,6 +82,7 @@ layout passes so far.}
     \item \href{#method-App-query_one}{\code{App$query_one()}}
     \item \href{#method-App-mount}{\code{App$mount()}}
     \item \href{#method-App-on}{\code{App$on()}}
+    \item \href{#method-App-off}{\code{App$off()}}
     \item \href{#method-App-bind}{\code{App$bind()}}
     \item \href{#method-App-log_events}{\code{App$log_events()}}
     \item \href{#method-App-event_log}{\code{App$event_log()}}
@@ -136,7 +137,8 @@ layout passes so far.}
   stylesheet = NULL,
   theme = "default",
   debug = FALSE,
-  reduce_motion = NULL
+  reduce_motion = NULL,
+  server = NULL
 )}
     \if{html}{\out{</div>}}
   }
@@ -155,6 +157,8 @@ layout passes so far.}
       \item{\code{reduce_motion}}{\code{TRUE} to turn decorative animation off, \code{NULL}
 to follow \code{options(termr.reduce_motion)} / the \code{TERMR_REDUCE_MOTION}
 environment variable.}
+      \item{\code{server}}{Optional \verb{function(input, output, session)} run once
+per \code{run()} after the widgets are mounted; see \code{\link[=app]{app()}}.}
     }
     \if{html}{\out{</div>}}
   }
@@ -275,6 +279,26 @@ exit, on error and on interrupt.
       \item{\code{type}}{Event type.}
       \item{\code{selector}}{Optional selector matched against the sender.}
       \item{\code{handler}}{\verb{function(event, app)}.}
+    }
+    \if{html}{\out{</div>}}
+  }
+}
+
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-App-off"></a>}}
+\if{latex}{\out{\hypertarget{method-App-off}{}}}
+\subsection{\code{App$off()}}{
+  Remove an event handler added with \code{on()} (the same
+\code{termr_handler} object). Unknown handlers are ignored.
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{App$off(handler)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{handler}}{A \code{termr_handler}.}
     }
     \if{html}{\out{</div>}}
   }

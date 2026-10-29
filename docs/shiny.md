@@ -26,8 +26,10 @@ server <- function(input, output, session) {
 run(app(ui, server = server))
 ```
 
-Run it from R started in a real terminal, or with `Rscript app.R`. Tab
-moves focus and Ctrl+C quits. `shinyApp(ui, server)` is
+Run it from R started in a real terminal, or with `Rscript app.R`. From
+the RStudio or Positron console it opens in the Viewer pane instead, as a
+Shiny app would (this needs the httpuv package). Tab moves focus and Ctrl+C
+quits. `shinyApp(ui, server)` is
 `app(ui, server = server)`, and `runApp()` is `run()`.
 
 ## Translation table

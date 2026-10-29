@@ -9,3 +9,7 @@ termr.Rcheck/
 /tools/pty/__pycache__/
 /tools/bench/baselines/*.Rprof*
 tests/testthat/_snaps/*.new.md
+*.Rproj
+renv/
+renv.lock
+.Renviron

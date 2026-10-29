@@ -192,9 +192,14 @@ and its parser is tested in Windows CI.
 
 For RC1, Windows real interactive console smoke and Linux through a real
 `ssh -t` session were manually reported PASS. macOS real terminal, tmux,
-screen and RStudio Terminal have not been manually validated. RStudio and
-Positron consoles are not terminal hosts; use their terminal tabs for
-interactive apps. See the [platform matrix](https://github.com/menshikovs/termr/blob/main/docs/platform-testing.md) and
+screen and RStudio Terminal have not been manually validated.
+
+RStudio and Positron consoles are not terminals. When `run()` is called from
+one (or from any interactive session without a terminal) and the httpuv
+package is installed, the app opens in the Viewer pane instead: a local
+web page runs a terminal emulator (xterm.js) and the R console waits until
+the app exits, as `shiny::runApp()` does. `options(termr.viewer = TRUE)`
+always uses the viewer and `FALSE` never does. See the [platform matrix](https://github.com/menshikovs/termr/blob/main/docs/platform-testing.md) and
 [SSH guide](https://github.com/menshikovs/termr/blob/main/docs/ssh.md) for evidence and limits.
 
 For knitr, CI and other non-TTY contexts, use [static export](https://github.com/menshikovs/termr/blob/main/docs/export.md).

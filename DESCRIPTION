@@ -1,9 +1,12 @@
 Package: termr
 Title: Reactive Terminal UI Framework for R
-Version: 1.0.5
-Authors@R:
+Version: 1.0.6
+Authors@R: c(
     person("Akims", "Mensikovs", email = "akimm7926@gmail.com",
-           role = c("aut", "cre", "cph"))
+           role = c("aut", "cre", "cph")),
+    person("The xterm.js authors", role = c("ctb", "cph"),
+           comment = "Bundled xterm.js, see inst/www/viewer/LICENSE.xterm")
+  )
 Description: Build interactive terminal user interfaces (TUIs) in R using
     reusable widgets, layouts, events, focus management and themes.
     Compose reactive applications, terminal dashboards and data explorers.
@@ -30,10 +33,13 @@ Imports:
     utils
 Suggests:
     DBI,
+    httpuv,
     jsonlite,
     knitr,
+    later,
     RSQLite,
     testthat (>= 3.0.0),
+    websocket,
     withr
 Config/testthat/edition: 3
 Config/roxygen2/version: 8.1.1

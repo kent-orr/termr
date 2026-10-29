@@ -41,5 +41,10 @@ Authors:
   \item Akims Mensikovs \email{akimm7926@gmail.com} [copyright holder]
 }
 
+Other contributors:
+\itemize{
+  \item The xterm.js authors (Bundled xterm.js, see inst/www/viewer/LICENSE.xterm) [contributor, copyright holder]
+}
+
 }
 \keyword{internal}

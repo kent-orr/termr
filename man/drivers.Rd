@@ -16,6 +16,8 @@ be tested without a terminal.
 input read from \verb{/dev/tty}).
 \item \code{WindowsDriver}: Windows consoles and Windows Terminal (a small
 PowerShell helper reads key events).
+\item \code{ViewerDriver}: no terminal, but an interactive session (RStudio,
+Positron); the app runs in xterm.js in the Viewer pane or a browser.
 \item \code{HeadlessDriver}: no terminal at all; output goes to a virtual
 terminal and input is fed programmatically. Used by \code{\link[=test_app]{test_app()}}.
 }

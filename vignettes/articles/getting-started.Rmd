@@ -57,8 +57,9 @@ Rscript -e "source('basic-app.R'); termr::run(application)"
 ```
 
 Type a name, press Tab to focus the button, then Enter. Escape quits. Use a
-real terminal or IDE terminal tab; an IDE console cannot host the full-screen
-app. Handled exits restore the terminal, while forced process termination
+real terminal or IDE terminal tab. From the RStudio or Positron console,
+`run(application)` opens the app in the Viewer pane instead (this needs the
+httpuv package). Handled exits restore the terminal, while forced process termination
 cannot guarantee cleanup.
 
 ## Verify without a terminal

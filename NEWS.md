@@ -1,3 +1,11 @@
+# termr 1.0.6
+
+* `run()` from the RStudio or Positron console, or any interactive session
+  without a terminal, now opens the app in the Viewer pane (or a browser)
+  instead of failing, when httpuv is installed. A local page runs xterm.js
+  (bundled) and talks to the app over a websocket.
+  `options(termr.viewer = TRUE/FALSE)` forces or disables it.
+
 # termr 1.0.5
 
 ## Shiny-shaped layer, phase 4: documentation

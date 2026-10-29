@@ -10,6 +10,8 @@
 #'   input read from `/dev/tty`).
 #' * `WindowsDriver`: Windows consoles and Windows Terminal (a small
 #'   PowerShell helper reads key events).
+#' * `ViewerDriver`: no terminal, but an interactive session (RStudio,
+#'   Positron); the app runs in xterm.js in the Viewer pane or a browser.
 #' * `HeadlessDriver`: no terminal at all; output goes to a virtual
 #'   terminal and input is fed programmatically. Used by [test_app()].
 #'
@@ -157,24 +159,30 @@ HeadlessDriver <- R6::R6Class(
 
 # Detection ------------------------------------------------------------------
 
-default_driver <- function() {
-  check_terminal()
+# Without a terminal (an IDE console, piped output) an interactive session
+# runs the app in the Viewer pane instead. options(termr.viewer = TRUE)
+# always uses the viewer; FALSE never does.
+default_driver <- function(problem = terminal_problem(), viewer = viewer_available()) {
+  if (isTRUE(getOption("termr.viewer")) || (!is.null(problem) && viewer)) return(ViewerDriver$new())
+  if (!is.null(problem)) {
+    stop(problem, "\nIn an interactive session, install the httpuv package to run the app in the Viewer pane.",
+         call. = FALSE)
+  }
   if (.Platform$OS.type == "windows") WindowsDriver$new() else PosixDriver$new()
 }
 
-check_terminal <- function() {
-  gui <- .Platform$GUI
-  if (identical(gui, "RStudio") || identical(gui, "Rgui") || identical(Sys.getenv("POSITRON"), "1")) {
-    stop(
+# Why R cannot run an app in its terminal, or NULL when it can.
+terminal_problem <- function(gui = .Platform$GUI, positron = Sys.getenv("POSITRON"),
+                             stdout_tty = isatty(stdout())) {
+  if (identical(positron, "1")) gui <- "Positron"
+  if (gui %in% c("RStudio", "Rgui", "Positron")) {
+    return(paste0(
       "termr apps need a real terminal, but R is running inside ", gui, ".\n",
-      "Run the app with Rscript from a terminal, e.g. `Rscript app.R`.",
-      call. = FALSE
-    )
+      "Run the app with Rscript from a terminal, e.g. `Rscript app.R`."
+    ))
   }
-  if (!isatty(stdout())) {
-    stop("termr apps need an interactive terminal: standard output is not a terminal.", call. = FALSE)
-  }
-  invisible(TRUE)
+  if (!stdout_tty) return("termr apps need an interactive terminal: standard output is not a terminal.")
+  NULL
 }
 
 write_stdout <- function(text) {

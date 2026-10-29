@@ -1,3 +1,11 @@
+# termr (development version)
+
+* `run()` from the RStudio or Positron console, or any interactive session
+  without a terminal, now opens the app in the Viewer pane (or a browser)
+  instead of failing, when httpuv is installed. A local page runs xterm.js
+  (bundled) and talks to the app over a websocket.
+  `options(termr.viewer = TRUE/FALSE)` forces or disables it.
+
 # termr 1.0.1
 
 First CRAN release, published on [CRAN](https://CRAN.R-project.org/package=termr)

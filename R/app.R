@@ -91,6 +91,7 @@ App <- R6::R6Class(
           NULL
         },
         interrupt = function(e) NULL,
+        termr_page_closed = function(e) NULL,
         error = function(e) e
       )
       private$shutdown()
@@ -1220,9 +1221,15 @@ app <- function(..., bindings = list(), actions = list(), title = NULL, mouse = 
 #' cancelled. The same app can be run again, but timers and workers have to
 #' be started again (for example from a `"mount"` handler).
 #'
-#' termr apps need a real terminal: run them with `Rscript` (or an
+#' termr apps run best in a real terminal: run them with `Rscript` (or an
 #' interactive R session) in a terminal such as Windows Terminal,
-#' iTerm2 or GNOME Terminal. RStudio's console is not a terminal.
+#' iTerm2 or GNOME Terminal. RStudio's and Positron's consoles are not
+#' terminals: from them (or any interactive session without a terminal)
+#' the app opens in the Viewer pane, or in a browser, when the httpuv
+#' package is installed. The page runs a terminal emulator and the console
+#' waits until the app exits; closing the page stops the app.
+#' `options(termr.viewer = TRUE)` always uses the viewer and `FALSE` never
+#' does.
 #'
 #' @param x An [App] created by [app()], or a widget (wrapped in an app).
 #' @param ... Passed to `App$run()`, e.g. `driver`.

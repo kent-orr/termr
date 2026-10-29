@@ -24,7 +24,13 @@ When the app stops, its timers, widget timers, workers and animations are
 cancelled. The same app can be run again, but timers and workers have to
 be started again (for example from a \code{"mount"} handler).
 
-termr apps need a real terminal: run them with \code{Rscript} (or an
+termr apps run best in a real terminal: run them with \code{Rscript} (or an
 interactive R session) in a terminal such as Windows Terminal,
-iTerm2 or GNOME Terminal. RStudio's console is not a terminal.
+iTerm2 or GNOME Terminal. RStudio's and Positron's consoles are not
+terminals: from them (or any interactive session without a terminal)
+the app opens in the Viewer pane, or in a browser, when the httpuv
+package is installed. The page runs a terminal emulator and the console
+waits until the app exits; closing the page stops the app.
+\code{options(termr.viewer = TRUE)} always uses the viewer and \code{FALSE} never
+does.
 }

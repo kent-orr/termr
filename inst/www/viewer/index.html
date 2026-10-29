@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>termr</title>
+<link rel="stylesheet" href="xterm.css">
+<style>
+  :root { --bg: #1e1e1e; --fg: #d4d4d4; --veil: rgba(30, 30, 30, 0.85); }
+  @media (prefers-color-scheme: light) {
+    :root { --bg: #ffffff; --fg: #1e1e1e; --veil: rgba(255, 255, 255, 0.85); }
+  }
+  html, body { height: 100%; margin: 0; background: var(--bg); color: var(--fg); overflow: hidden; }
+  #terminal { position: absolute; inset: 4px; }
+  #status {
+    position: absolute; inset: 0; display: none; align-items: center; justify-content: center;
+    background: var(--veil); font: 14px system-ui, sans-serif;
+  }
+  #status.shown { display: flex; }
+</style>
+</head>
+<body>
+<div id="terminal"></div>
+<div id="status"></div>
+<script src="xterm.js"></script>
+<script src="addon-fit.js"></script>
+<script src="termr-viewer.js"></script>
+</body>
+</html>
